@@ -2,12 +2,15 @@ import mongoose from 'mongoose';
 
 const commentsSchema = new mongoose.Schema(
   {
-    _videoId: String,
+    _videoId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Video',
+    },
     username: String,
     comment: String,
   },
   {
-    timestamp: true,
+    timestamps: true,
   }
 );
 

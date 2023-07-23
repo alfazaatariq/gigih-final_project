@@ -1,5 +1,6 @@
 import product from '../models/products.js';
 import video from '../models/videos.js';
+import comment from '../models/comments.js';
 
 export const getAllVideos = async (req, res) => {
   let data = await video.find();
@@ -36,6 +37,26 @@ export const getProductsById = async (req, res) => {
   } catch (error) {
     res.status(404).json({
       message: 'Products not found!',
+    });
+  }
+};
+
+export const getCommentsById = async (req, res) => {
+  let { _videoId } = req.body;
+
+  try {
+    let data = await comment.find({
+      _videoId: _videoId,
+    });
+
+    if (data.length > 0) {
+      return res.status(200).json({
+        comments: data,
+      });
+    }
+  } catch (error) {
+    res.status(404).json({
+      message: 'Comments not found!',
     });
   }
 };

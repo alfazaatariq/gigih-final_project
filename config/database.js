@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 import video from '../models/videos.js';
 import product from '../models/products.js';
+import comment from '../models/comments.js';
 import populateVideos from '../helpers/populateVideos.js';
 import populateProducts from '../helpers/populateProducts.js';
+import populateComments from '../helpers/populateComments.js';
 
 const connectToDB = async () => {
   try {
@@ -11,8 +13,10 @@ const connectToDB = async () => {
 
     let videos = await video.find();
     let products = await product.find();
+    let comments = await comment.find();
     // let products = await product.deleteMany({});
     // let videos = await video.deleteMany({});
+    // let comments = await comment.deleteMany({});
 
     if (videos.length === 0) {
       await populateVideos();
@@ -22,6 +26,11 @@ const connectToDB = async () => {
     if (products.length === 0) {
       await populateProducts();
       console.log('Products Populated!');
+    }
+
+    if (comments.length === 0) {
+      await populateComments();
+      console.log('Comments Populated!');
     }
   } catch (error) {
     console.log(error);
