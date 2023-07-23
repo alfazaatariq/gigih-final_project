@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
 const productsSchema = new mongoose.Schema({
-  _videoId: String,
+  _videoId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Video',
+  },
   name: String,
   link: String,
   price: Number,
