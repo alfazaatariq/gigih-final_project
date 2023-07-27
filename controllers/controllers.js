@@ -20,6 +20,18 @@ export const getAllVideos = async (req, res) => {
 export const getProductsById = async (req, res) => {
   let { _videoId } = req.body;
 
+  if (!checkType(_videoId, 'string')) {
+    return res.status(400).json({
+      message: 'Invalid data type!',
+    });
+  }
+
+  if (isEmpty(_videoId)) {
+    return res.status(404).json({
+      message: 'Request body can not be empty!',
+    });
+  }
+
   try {
     let data = await product.find({
       _videoId: _videoId,
@@ -45,6 +57,18 @@ export const getProductsById = async (req, res) => {
 
 export const getCommentsById = async (req, res) => {
   let { _videoId } = req.body;
+
+  if (!checkType(_videoId, 'string')) {
+    return res.status(400).json({
+      message: 'Invalid data type!',
+    });
+  }
+
+  if (isEmpty(_videoId)) {
+    return res.status(404).json({
+      message: 'Request body can not be empty!',
+    });
+  }
 
   try {
     let data = await comment.find({
