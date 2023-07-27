@@ -43,6 +43,14 @@ const populateComments = async () => {
       comment:
         'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Beatae fugit nobis voluptate architecto voluptatem mollitia?',
     },
+    {
+      _videoId: await findVideoId(
+        'https://i.ytimg.com/vi/Lvq01WvB5D0/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA'
+      ),
+      username: 'User 69',
+      comment:
+        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Laborum provident eligendi nobis? Velit non magni ut facere quasi excepturi at asperiores aspernatur nesciunt ea repellendus vel dignissimos placeat qui similique minima recusandae reiciendis, odio, et, mollitia architecto. Maxime, sunt harum?',
+    },
   ];
 
   try {
