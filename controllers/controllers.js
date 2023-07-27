@@ -5,16 +5,18 @@ import isEmpty from '../helpers/isEmpty.js';
 import checkType from '../helpers/checkType.js';
 
 export const getAllVideos = async (req, res) => {
-  let data = await video.find();
-  if (data.length > 0) {
-    return res.status(200).json({
-      videos: data,
+  try {
+    let data = await video.find();
+    if (data.length > 0) {
+      return res.status(200).json({
+        videos: data,
+      });
+    }
+  } catch (error) {
+    res.status(404).json({
+      message: 'Its Empty!',
     });
   }
-
-  res.status(404).json({
-    message: 'Its Empty!',
-  });
 };
 
 export const getProductsById = async (req, res) => {
@@ -27,7 +29,7 @@ export const getProductsById = async (req, res) => {
   }
 
   if (isEmpty(_videoId)) {
-    return res.status(404).json({
+    return res.status(400).json({
       message: 'Request body can not be empty!',
     });
   }
@@ -65,7 +67,7 @@ export const getCommentsById = async (req, res) => {
   }
 
   if (isEmpty(_videoId)) {
-    return res.status(404).json({
+    return res.status(400).json({
       message: 'Request body can not be empty!',
     });
   }
