@@ -5,18 +5,25 @@ import isEmpty from '../helpers/isEmpty.js';
 import checkType from '../helpers/checkType.js';
 
 export const getAllVideos = async (req, res) => {
-  try {
-    let data = await video.find();
-    if (data.length > 0) {
-      return res.status(200).json({
-        videos: data,
-      });
+  let count = await video.count();
+
+  if (count > 0) {
+    try {
+      let data = await video.find();
+
+      if (data.length > 0) {
+        return res.status(200).json({
+          videos: data,
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    res.status(404).json({
-      message: 'Its Empty!',
-    });
   }
+
+  res.status(404).json({
+    message: 'Its Empty!',
+  });
 };
 
 export const getProductsById = async (req, res) => {

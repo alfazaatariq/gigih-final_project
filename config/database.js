@@ -11,24 +11,25 @@ const connectToDB = async () => {
     await mongoose.connect(process.env.DB_URL);
     console.log('DB Connected!');
 
-    let videos = await video.find();
-    let products = await product.find();
-    let comments = await comment.find();
+    let videos = await video.count();
+    let products = await product.count();
+    let comments = await comment.count();
+
     // let products = await product.deleteMany({});
     // let videos = await video.deleteMany({});
     // let comments = await comment.deleteMany({});
 
-    if (videos.length === 0) {
+    if (videos === 0) {
       await populateVideos();
       console.log('Videos Populated!');
     }
 
-    if (products.length === 0) {
+    if (products === 0) {
       await populateProducts();
       console.log('Products Populated!');
     }
 
-    if (comments.length === 0) {
+    if (comments === 0) {
       await populateComments();
       console.log('Comments Populated!');
     }
