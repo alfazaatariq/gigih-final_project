@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -8,10 +9,15 @@ interface Video {
 
 const VideosList = () => {
   const [videos, setVideos] = useState<Video[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchVideos();
   }, []);
+
+  const onClickHandler = (videoID: string) => {
+    navigate(`/video/${videoID}`);
+  };
 
   const fetchVideos = async () => {
     const res = await axios.get('http://localhost:3000/videos');
@@ -23,6 +29,7 @@ const VideosList = () => {
       {videos.map((video) => {
         return (
           <li
+            onClick={() => onClickHandler(video._id)}
             key={video._id}
             className='w-1/2 p-2 h-60 md:w-1/3 lg:w-1/5 cursor-pointer hover:bg-slate-400 rounded-lg transition duration-300 ease-in-out'
           >

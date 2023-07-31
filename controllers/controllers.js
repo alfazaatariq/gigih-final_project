@@ -4,6 +4,41 @@ import comment from '../models/comments.js';
 import isEmpty from '../helpers/isEmpty.js';
 import checkType from '../helpers/checkType.js';
 
+export const getVideoById = async (req, res) => {
+  let { id } = req.params;
+
+  if (!checkType(id, 'string')) {
+    return res.status(400).json({
+      message: 'Invalid data type!',
+    });
+  }
+
+  if (isEmpty(id)) {
+    return res.status(400).json({
+      message: 'Request body cannot be empty!',
+    });
+  }
+
+  try {
+    const response = await video.findById(id);
+    if (response) {
+      return res.status(200).json({
+        message: 'Video found!',
+        video: response,
+      });
+    } else {
+      return res.status(404).json({
+        message: 'Video not found!',
+      });
+    }
+  } catch (error) {
+    console.error('Error finding video:', error);
+    return res.status(500).json({
+      message: 'Internal server error',
+    });
+  }
+};
+
 export const getAllVideos = async (req, res) => {
   let count = await video.count();
 
