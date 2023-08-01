@@ -26,15 +26,10 @@ export const getVideoById = async (req, res) => {
         message: 'Video found!',
         video: response,
       });
-    } else {
-      return res.status(404).json({
-        message: 'Video not found!',
-      });
     }
   } catch (error) {
-    console.error('Error finding video:', error);
-    return res.status(500).json({
-      message: 'Internal server error',
+    return res.status(404).json({
+      message: 'Video not found!',
     });
   }
 };

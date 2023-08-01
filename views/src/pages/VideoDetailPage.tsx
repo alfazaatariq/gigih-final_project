@@ -1,3 +1,4 @@
+import extractVideoID from '../../helpers/extractVideoID';
 import { useEffect, useState } from 'react';
 import PageLayout from '../layouts/PageLayout';
 import { useLocation } from 'react-router-dom';
@@ -16,6 +17,7 @@ const VideoDetailPage = () => {
     __v: 0,
   });
   const location = useLocation();
+  const youtubeID = extractVideoID(videoDetail.imageUrl);
   const videoID = location.pathname.split('/video/')[1];
 
   useEffect(() => {
@@ -28,19 +30,27 @@ const VideoDetailPage = () => {
       const res = await axios.get(`http://localhost:3000/videos/${videoID}`);
       setVideoDetail(res.data.video);
     } catch (error) {
-      console.error('Error fetching video details:', error);
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.status);
+      } else {
+        console.error('Unknown error occurred:', error);
+      }
     }
   };
 
   return (
     <>
       <PageLayout>
-        <h1>VIDEO DETAIL PAGE</h1>
         {/* Display the video details */}
-        <div>
-          <h2>Video ID: {videoDetail._id}</h2>
-          <img src={videoDetail.imageUrl} alt='Video Thumbnail' />
-          {/* Any other video details you want to display */}
+        <div className='absolute w-full top-0'>
+          <iframe
+            className='w-full h-64'
+            src={`https://www.youtube.com/embed/${youtubeID}`}
+            title='YouTube video player'
+            allow='autoplay;'
+          ></iframe>
+
+          <h2 className='text-white'>Product List</h2>
         </div>
       </PageLayout>
     </>

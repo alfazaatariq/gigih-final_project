@@ -7,9 +7,9 @@ interface PageLayoutProps {
 
 const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   return (
-    <div className='p-4 bg-gradient-to-b from-slate-900 to-purple-950 min-h-screen '>
+    <div className='container mx-auto md:p-4'>
       <Header />
-      <div>{children}</div>
+      {children}
       {/* footer */}
     </div>
   );
