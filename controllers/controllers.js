@@ -5,25 +5,25 @@ import isEmpty from '../helpers/isEmpty.js';
 import checkType from '../helpers/checkType.js';
 
 export const getVideoById = async (req, res) => {
-  let { id } = req.params;
+  let { _videoId } = req.params;
 
-  if (!checkType(id, 'string')) {
+  if (!checkType(_videoId, 'string')) {
     return res.status(400).json({
       message: 'Invalid data type!',
     });
   }
 
-  if (isEmpty(id)) {
+  if (isEmpty(_videoId)) {
     return res.status(400).json({
       message: 'Request body cannot be empty!',
     });
   }
 
   try {
-    const response = await video.findById(id);
+    const response = await video.findById(_videoId);
     if (response) {
       return res.status(200).json({
-        message: 'Video found!',
+        message: 'video found!',
         video: response,
       });
     }
@@ -57,7 +57,7 @@ export const getAllVideos = async (req, res) => {
 };
 
 export const getProductsById = async (req, res) => {
-  let { _videoId } = req.body;
+  let { _videoId } = req.params;
 
   if (!checkType(_videoId, 'string')) {
     return res.status(400).json({

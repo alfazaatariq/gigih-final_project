@@ -1,11 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
-interface Video {
-  _id: string;
-  imageUrl: string;
-}
+import Video from '../../../interfaces/video';
 
 const VideosList = () => {
   const [videos, setVideos] = useState<Video[]>([]);

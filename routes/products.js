@@ -3,6 +3,6 @@ import { getProductsById } from '../controllers/controllers.js';
 
 const router = Router();
 
-router.get('/', getProductsById);
+router.get('/:_videoId', getProductsById);
 
 export default router;
