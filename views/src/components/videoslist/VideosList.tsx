@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Video from '../../../interfaces/video';
+import config from '../../../config/config';
 
 const VideosList = () => {
   const [videos, setVideos] = useState<Video[]>([]);
@@ -16,7 +17,7 @@ const VideosList = () => {
   };
 
   const fetchVideos = async () => {
-    const res = await axios.get('http://localhost:3000/videos');
+    const res = await axios.get(`${config.baseURL}:${config.port}/videos`);
     setVideos(res.data.videos);
   };
 

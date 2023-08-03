@@ -5,6 +5,9 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import VideoDetail from '../../interfaces/videoDetail';
 import Products from '../../interfaces/products';
+import { io } from 'socket.io-client';
+import config from '../../config/config';
+
 // // Import Swiper React components
 // import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -30,11 +33,24 @@ const VideoDetailPage = () => {
     // Call the fetchVideoByID function when the component mounts
     fetchVideoByID(videoID);
     fetchProductsByID(videoID);
+
+    // transports is important
+    const socket = io(`${config.baseURL}:${config.port}`, {
+      transports: ['websocket'],
+    });
+    socket.on('connect', () => {
+      console.log('Connected to the Socket.IO server');
+    });
+    socket.on('connect_error', (error) => {
+      console.log('Error connecting to the Socket.IO server:', error.message);
+    });
   }, [videoID]);
 
   const fetchProductsByID = async (videoID: string) => {
     try {
-      const res = await axios.get(`http://localhost:3000/products/${videoID}`);
+      const res = await axios.get(
+        `${config.baseURL}:${config.port}/products/${videoID}`
+      );
       setProducts(res.data.products);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -47,7 +63,9 @@ const VideoDetailPage = () => {
 
   const fetchVideoByID = async (videoID: string) => {
     try {
-      const res = await axios.get(`http://localhost:3000/videos/${videoID}`);
+      const res = await axios.get(
+        `${config.baseURL}:${config.port}/videos/${videoID}`
+      );
       setVideoDetail(res.data.video);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -76,8 +94,8 @@ const VideoDetailPage = () => {
               <ul className='flex items-center space-x-2 overflow-auto bg-slate-900 py-2'>
                 {products.map((product) => {
                   return (
-                    <a href={product.link}>
-                      <li key={product._id}>
+                    <a key={product._id} href={product.link}>
+                      <li>
                         <div className='text-white bg-slate-700 rounded-lg p-2 cursor-pointer'>
                           <p className='line-clamp-1'>{product.name}</p>
                           <p>Rp.{product.price}</p>

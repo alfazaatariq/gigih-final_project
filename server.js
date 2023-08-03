@@ -5,8 +5,11 @@ import videoRoutes from './routes/videos.js';
 import productRoutes from './routes/products.js';
 import cors from 'cors';
 import commentRoutes from './routes/comments.js';
+import { Server } from 'socket.io';
+import http from 'http';
 
 const app = Express();
+
 configDotenv();
 await connectToDB();
 
@@ -17,6 +20,17 @@ app.use('/videos', videoRoutes);
 app.use('/products', productRoutes);
 app.use('/comments', commentRoutes);
 
-app.listen(process.env.PORT, () => {
+const httpServer = http.createServer(app);
+
+const io = new Server(httpServer);
+
+io.on('connection', (socket) => {
+  console.log('Client connected');
+  socket.on('message', (data) => {
+    console.log(data);
+  });
+});
+
+httpServer.listen(process.env.PORT, () => {
   console.log('listening on port ' + process.env.PORT);
 });
