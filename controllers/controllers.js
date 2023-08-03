@@ -95,7 +95,7 @@ export const getProductsById = async (req, res) => {
 };
 
 export const getCommentsById = async (req, res) => {
-  let { _videoId } = req.body;
+  let { _videoId } = req.params;
 
   if (!checkType(_videoId, 'string')) {
     return res.status(400).json({
