@@ -1,10 +1,18 @@
 // import React from 'react'
 
+import { useNavigate } from 'react-router-dom';
+
 const Header = () => {
+  const navigation = useNavigate();
   return (
     <div className='flex items-center justify-between flex-wrap space-x-2 w-full'>
       {/* logo */}
-      <h1 className='text-white font-borel h-3'>SHOPEDIA</h1>
+      <h1
+        onClick={() => navigation('/')}
+        className='text-white font-borel h-3 cursor-pointer'
+      >
+        SHOPEDIA
+      </h1>
       {/* search */}
       <input
         className='outline-none hidden rounded-md px-2 md:block md:grow'

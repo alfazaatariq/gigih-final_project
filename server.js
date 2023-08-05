@@ -25,9 +25,9 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer);
 
 io.on('connection', (socket) => {
-  socket.on('comment', (data) =>
-    socket.broadcast.emit('received-comment', data)
-  );
+  socket.on('comment', (sortedComments, room) => {
+    io.emit('received-comment', sortedComments, room);
+  });
 });
 
 httpServer.listen(process.env.PORT, () => {

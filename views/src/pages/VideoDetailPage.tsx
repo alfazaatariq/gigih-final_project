@@ -9,13 +9,15 @@ import Comments from '../../interfaces/comments';
 import NewComment from '../../interfaces/newComment';
 import { io } from 'socket.io-client';
 import config from '../../config/config';
-
-// transports is important
-const socket = io(`${config.baseURL}:${config.port}`, {
-  transports: ['websocket'],
-});
+import YoutubeFrame from '../components/iframe/YoutubeFrame';
+import BackButton from '../components/buttons/BackButton';
+import { useNavigate } from 'react-router-dom';
+import ProductsList from '../components/products-list/ProductsList';
+import CommentsList from '../components/comments-list/CommentsList';
+import sortComments from '../../helpers/sortComments';
 
 const VideoDetailPage = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const videoID = location.pathname.split('/video/')[1];
   const [videoDetail, setVideoDetail] = useState<VideoDetail>({
@@ -27,7 +29,7 @@ const VideoDetailPage = () => {
   const [comments, setComments] = useState<Comments[]>([]);
   const [newComment, setNewComment] = useState<NewComment>({
     _videoId: videoID,
-    username: '',
+    username: 'Testing',
     comment: '',
   });
   const youtubeID = extractVideoID(videoDetail.imageUrl);
@@ -37,41 +39,55 @@ const VideoDetailPage = () => {
     fetchVideoByID(videoID);
     fetchProductsByID(videoID);
     fetchCommentsByID(videoID);
+  }, [videoID]);
 
+  const socket = io(`${config.baseURL}:${config.port}`, {
+    transports: ['websocket'],
+  });
+
+  useEffect(() => {
     socket.on('connect', () => {
       console.log('Connected to the Socket.IO server');
+      // socket.emit('join-room', videoID);
     });
+
     socket.on('connect_error', (error) => {
       console.log('Error connecting to the Socket.IO server:', error.message);
     });
-
-    socket.on('received-comment', (data) => {
-      // console.log(data);
-      console.log(data);
+    socket.on('received-comment', (sortedComments, room) => {
+      if (room === videoID) setComments(sortedComments);
     });
-  }, [videoID]);
+  }, [socket, videoID]);
 
-  const onSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    document.getElementById('username')?.setAttribute('value', '');
-    document.getElementById('comment')?.setAttribute('value', '');
 
-    setNewComment((previous) => ({
-      ...previous,
-      _videoId: videoID,
-    }));
+    try {
+      await axios.post(`${config.baseURL}:${config.port}/comments`, newComment);
+      const res = await axios.get(
+        `${config.baseURL}:${config.port}/comments/${videoID}`
+      );
 
-    socket.emit('comment', newComment);
+      const sortedComments = sortComments(res.data.comments, 'asc');
 
-    setNewComment((previous) => ({
-      ...previous,
-      username: '',
-      comment: '',
-    }));
+      socket.emit('comment', sortedComments, videoID);
+
+      setNewComment((previous) => ({
+        ...previous,
+        username: '',
+        comment: '',
+      }));
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.status);
+      } else {
+        console.error('Unknown error occurred:', error);
+      }
+    }
   };
 
   const onChangeCommentHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setNewComment((previous) => ({
       ...previous,
@@ -93,7 +109,8 @@ const VideoDetailPage = () => {
       const res = await axios.get(
         `${config.baseURL}:${config.port}/comments/${videoID}`
       );
-      setComments(res.data.comments);
+      const sortedComments = sortComments(res.data.comments, 'asc');
+      setComments(sortedComments);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.status);
@@ -137,83 +154,64 @@ const VideoDetailPage = () => {
     <>
       <PageLayout>
         {/* Display the video details */}
-        <div className='absolute w-full top-0'>
-          <iframe
-            className='w-full h-64'
-            src={`https://www.youtube.com/embed/${youtubeID}`}
-            title='YouTube video player'
-            allow='autoplay;'
-          ></iframe>
+        <div className='w-full relative -top-8 sm:top-4'>
+          <YoutubeFrame youtubeID={youtubeID} />
 
           <div>
-            <h2 className='text-white'>Product List</h2>
-            <div>
-              <ul className='flex items-center space-x-2 overflow-auto bg-slate-900 py-2'>
-                {products.map((product) => {
-                  return (
-                    <a key={product._id} href={product.link}>
-                      <li>
-                        <div className='text-white bg-slate-700 rounded-lg p-2 cursor-pointer'>
-                          <p className='line-clamp-1'>{product.name}</p>
-                          <p>Rp.{product.price}</p>
-                        </div>
-                      </li>
-                    </a>
-                  );
-                })}
-              </ul>
+            <div className='text-white'>
+              <div
+                onClick={() => navigate('/')}
+                className='w-8 cursor-pointer hover:bg-slate-400'
+              >
+                <BackButton color='white' />
+              </div>
             </div>
+            <h2 className='text-white'>Product List</h2>
+            <ProductsList products={products} />
           </div>
 
           {/* comments */}
-          <div id='comment-box'>
-            <div>
-              <form onSubmit={onSubmitHandler}>
-                <input
-                  type='text'
-                  name='username'
-                  id='username'
-                  maxLength={10}
-                  placeholder='username'
-                  required
-                  value={newComment.username}
-                  onChange={onChangeUsernameHandler}
-                />
-                <br />
-                <br />
-                <input
-                  type='text'
+          <div className='mt-4'>
+            <form className='space-y-4' onSubmit={onSubmitHandler}>
+              <input
+                type='text'
+                name='username'
+                id='username'
+                maxLength={10}
+                placeholder='username'
+                required
+                value={newComment.username}
+                onChange={onChangeUsernameHandler}
+              />
+              <div>
+                <textarea
                   name='comment'
                   id='comment'
-                  maxLength={200}
-                  placeholder='type your comment'
+                  rows={1}
+                  placeholder='add a comment...'
                   required
                   value={newComment.comment}
                   onChange={onChangeCommentHandler}
-                />
-                <br />
-                <br />
-                <button className='bg-slate-100 p-2' type='submit'>
-                  Add Comment
-                </button>
-              </form>
-            </div>
-            <div>
-              <ul className='space-y-2'>
-                {comments.map((comment, index) => {
-                  return (
-                    <li key={index}>
-                      <div className='text-white bg-slate-700 p-2 rounded-lg m-2'>
-                        <p>{comment.username}</p>
-                        <p>{comment.comment}</p>
-                        <p>{comment.createdAt}</p>
-                        <p>{comment.updatedAt}</p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+                  className='w-full bg-transparent outline-none border-b border-slate-600 text-white pt-2 focus:border-slate-100 transition duration-150 ease-linear resize-none'
+                ></textarea>
+
+                <div className='flex space-x-2 justify-end mt-2'>
+                  <button
+                    className='bg-transparent text-white rounded-xl px-2 py-1 text-sm hover:bg-slate-400'
+                    type='submit'
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className='bg-slate-100 rounded-xl px-2 py-1 text-sm hover:bg-slate-400'
+                    type='submit'
+                  >
+                    Comment
+                  </button>
+                </div>
+              </div>
+            </form>
+            <CommentsList comments={comments} />
           </div>
         </div>
       </PageLayout>
