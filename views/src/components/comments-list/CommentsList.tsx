@@ -1,4 +1,5 @@
 import Comments from '../../../interfaces/comments';
+import changeDateFormat from '../../../helpers/changeDateFormat';
 
 const CommentsList = ({ comments }: { comments: Comments[] }) => {
   return (
@@ -6,12 +7,12 @@ const CommentsList = ({ comments }: { comments: Comments[] }) => {
       {comments
         ? comments.map((comment, index) => {
             return (
-              <li key={index}>
-                <div className='text-white bg-slate-700 p-2 rounded-lg m-2'>
+              <li className='even:bg-slate-600 odd:bg-transparent' key={index}>
+                <div className='text-white  p-2 rounded-lg'>
                   <p>{comment.username}</p>
                   <p>{comment.comment}</p>
-                  <p>{comment.createdAt}</p>
-                  <p>{comment.updatedAt}</p>
+                  <p>{changeDateFormat(comment.updatedAt, 'time')}</p>
+                  <p>{changeDateFormat(comment.updatedAt, 'date')}</p>
                 </div>
               </li>
             );

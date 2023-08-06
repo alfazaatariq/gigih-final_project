@@ -1,5 +1,5 @@
 import extractVideoID from '../../helpers/extractVideoID';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PageLayout from '../layouts/PageLayout';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -16,7 +16,12 @@ import ProductsList from '../components/products-list/ProductsList';
 import CommentsList from '../components/comments-list/CommentsList';
 import sortComments from '../../helpers/sortComments';
 
+const socket = io(`${config.baseURL}:${config.port}`, {
+  transports: ['websocket'],
+});
+
 const VideoDetailPage = () => {
+  const commentRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const videoID = location.pathname.split('/video/')[1];
@@ -32,7 +37,22 @@ const VideoDetailPage = () => {
     username: 'Testing',
     comment: '',
   });
+  const [isCommenting, setIsCommenting] = useState(false);
   const youtubeID = extractVideoID(videoDetail.imageUrl);
+
+  useEffect(() => {
+    const isCommenting = (event: MouseEvent) => {
+      if (!commentRef.current?.contains(event.target as Node)) {
+        setIsCommenting(false);
+      }
+    };
+
+    document.addEventListener('mousedown', isCommenting);
+
+    return () => {
+      document.removeEventListener('mousedown', isCommenting);
+    };
+  });
 
   useEffect(() => {
     // Call the fetchVideoByID function when the component mounts
@@ -41,14 +61,9 @@ const VideoDetailPage = () => {
     fetchCommentsByID(videoID);
   }, [videoID]);
 
-  const socket = io(`${config.baseURL}:${config.port}`, {
-    transports: ['websocket'],
-  });
-
   useEffect(() => {
     socket.on('connect', () => {
       console.log('Connected to the Socket.IO server');
-      // socket.emit('join-room', videoID);
     });
 
     socket.on('connect_error', (error) => {
@@ -57,7 +72,7 @@ const VideoDetailPage = () => {
     socket.on('received-comment', (sortedComments, room) => {
       if (room === videoID) setComments(sortedComments);
     });
-  }, [socket, videoID]);
+  }, [videoID]);
 
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -172,7 +187,7 @@ const VideoDetailPage = () => {
 
           {/* comments */}
           <div className='mt-4'>
-            <form className='space-y-4' onSubmit={onSubmitHandler}>
+            <form className='space-y-4 my-4' onSubmit={onSubmitHandler}>
               <input
                 type='text'
                 name='username'
@@ -183,8 +198,9 @@ const VideoDetailPage = () => {
                 value={newComment.username}
                 onChange={onChangeUsernameHandler}
               />
-              <div>
+              <div ref={commentRef}>
                 <textarea
+                  onClick={() => setIsCommenting(!isCommenting)}
                   name='comment'
                   id='comment'
                   rows={1}
@@ -195,10 +211,17 @@ const VideoDetailPage = () => {
                   className='w-full bg-transparent outline-none border-b border-slate-600 text-white pt-2 focus:border-slate-100 transition duration-150 ease-linear resize-none'
                 ></textarea>
 
-                <div className='flex space-x-2 justify-end mt-2'>
+                <div
+                  className={
+                    isCommenting
+                      ? 'flex space-x-2 justify-end mt-2'
+                      : 'invisible'
+                  }
+                >
                   <button
                     className='bg-transparent text-white rounded-xl px-2 py-1 text-sm hover:bg-slate-400'
-                    type='submit'
+                    type='button'
+                    onClick={() => setIsCommenting(!isCommenting)}
                   >
                     Cancel
                   </button>
