@@ -8,20 +8,16 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 export const login = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { email, password } = req.body;
 
-  if (
-    !checkType(username, 'string') ||
-    !checkType(email, 'string') ||
-    !checkType(password, 'string')
-  ) {
+  if (!checkType(email, 'string') || !checkType(password, 'string')) {
     return res.status(400).json({
       message: 'Invalid datatype!',
     });
   }
 
   // check if any value in the body is empty
-  if (isEmpty(username) || isEmpty(email) || isEmpty(password)) {
+  if (isEmpty(email) || isEmpty(password)) {
     return res.status(400).json({
       error: 'Request body can not be empty!',
     });
@@ -31,12 +27,11 @@ export const login = async (req, res) => {
     // check if the user is already registered
     const data = await user.findOne({
       email: email,
-      username: username,
     });
 
     if (!data) {
-      return res.status(404).json({
-        message: 'Invalid email or username!',
+      return res.status(400).json({
+        message: 'Invalid email!',
       });
     }
 
@@ -52,7 +47,7 @@ export const login = async (req, res) => {
       { user_id: data._id, email: data.email, username: data.username },
       process.env.SECRET_KEY,
       {
-        expiresIn: '1h',
+        expiresIn: '15m',
       }
     );
 
