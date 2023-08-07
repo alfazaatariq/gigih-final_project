@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Login from '../../../interfaces/login';
 import config from '../../../config/config';
 import axios from 'axios';
+import SeePasswordButton from '../buttons/SeePasswordButton';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Login = () => {
     password: '',
   });
   const [error, setError] = useState('');
+  const [visible, setVisible] = useState(false);
 
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,7 +37,7 @@ const Login = () => {
   const onChangeEmailHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setData((previous) => ({
       ...previous,
-      email: event.target.value,
+      email: event.target.value.trim(),
     }));
   };
 
@@ -44,7 +46,7 @@ const Login = () => {
   ) => {
     setData((previous) => ({
       ...previous,
-      password: event.target.value,
+      password: event.target.value.trim(),
     }));
   };
 
@@ -65,15 +67,24 @@ const Login = () => {
           required
           onChange={onChangeEmailHandler}
         />
-        <input
-          className='rounded-md px-2 outline-blue-400 text-slate-800'
-          type='password'
-          name='password'
-          id='password'
-          placeholder='Password'
-          required
-          onChange={onChangePasswordHandler}
-        />
+        <div className='flex items-center relative'>
+          <input
+            className='w-full rounded-md px-2 pr-7 outline-blue-400 text-slate-800'
+            type={visible ? 'text' : 'password'}
+            name='password'
+            id='password'
+            placeholder='Password'
+            required
+            onChange={onChangePasswordHandler}
+          />
+          <div
+            onClick={() => setVisible(!visible)}
+            className='w-4 absolute right-1 cursor-pointer hover:opacity-40'
+          >
+            <SeePasswordButton visible={visible} color='black' />
+          </div>
+        </div>
+
         <button className='bg-green-600 rounded-2xl hover:bg-green-800'>
           Login
         </button>

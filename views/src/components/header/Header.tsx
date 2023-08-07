@@ -1,38 +1,71 @@
-// import React from 'react'
-
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import config from '../../../config/config';
+import jwtDecode from 'jwt-decode';
+import { useState, useEffect } from 'react';
+import Users from '../../../interfaces/users';
+import Token from '../../../interfaces/token';
+import checkAuthStatus from '../../../helpers/checkAuthStatus';
 
 const Header = () => {
+  const isLoggedIn = checkAuthStatus();
   const navigation = useNavigate();
+  const [profile, setProfile] = useState<Users>({
+    _id: '',
+    email: '',
+    username: '',
+  });
+
+  useEffect(() => {
+    fetchUserByID();
+  }, []);
+
+  const fetchUserByID = async () => {
+    const token: string | null = sessionStorage.getItem('token');
+
+    if (token) {
+      const decodedToken: Token = jwtDecode(token);
+      try {
+        const res = await axios.post(
+          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`
+        );
+
+        setProfile(res.data.user);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.status);
+        } else {
+          console.error('Unknown error occurred:', error);
+        }
+      }
+    } else {
+      console.log('Token not available.'); // Handle the case where token is null
+    }
+  };
   return (
-    <div className='flex items-center justify-between flex-wrap space-x-2 w-full'>
+    <div className='flex items-center justify-between mt-2 flex-wrap space-x-2 mx-2'>
       {/* logo */}
       <h1
         onClick={() => navigation('/')}
-        className='text-white font-borel h-3 cursor-pointer'
+        className='text-white hover:opacity-40 font-borel h-3 cursor-pointer'
       >
         SHOPEDIA
       </h1>
-      {/* search */}
-      <input
-        className='outline-none hidden rounded-md px-2 md:block md:grow'
-        type='text'
-        name='search'
-        placeholder='Search videos you are looking for'
-        id='search'
-      />
-      <img
-        className='w-7 h-7 cursor-pointer hover:bg-slate-500 rounded-md transition duration-150 ease-in-out p-1'
-        src='/search/search-icon.png'
-        alt='search'
-      />
       {/* profile */}
-      <img
+      <div
         onClick={() => navigation('/profile')}
-        className='w-7 hidden md:block cursor-pointer'
-        src='/profile-pictures/pp.png'
-        alt='profile-picture'
-      />
+        className='flex hover:opacity-40 space-x-2 items-center cursor-pointer'
+      >
+        <span className='text-white text-sm'>
+          {isLoggedIn ? profile.username : ''}
+        </span>
+        <img
+          onClick={() => navigation('/profile')}
+          className='w-7  rounded-md md:block'
+          src='/profile-pictures/pp.png'
+          alt='profile-picture'
+        />
+      </div>
     </div>
   );
 };
