@@ -3,6 +3,7 @@ import { configDotenv } from 'dotenv';
 import connectToDB from './config/database.js';
 import videoRoutes from './routes/videos.js';
 import productRoutes from './routes/products.js';
+import authRoutes from './routes/auth.js';
 import cors from 'cors';
 import commentRoutes from './routes/comments.js';
 import { Server } from 'socket.io';
@@ -19,6 +20,7 @@ app.use(cors());
 app.use('/videos', videoRoutes);
 app.use('/products', productRoutes);
 app.use('/comments', commentRoutes);
+app.use('/auth', authRoutes);
 
 const httpServer = http.createServer(app);
 

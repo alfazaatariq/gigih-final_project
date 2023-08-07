@@ -1,8 +1,120 @@
 import product from '../models/products.js';
 import video from '../models/videos.js';
 import comment from '../models/comments.js';
+import user from '../models/users.js';
 import isEmpty from '../helpers/isEmpty.js';
 import checkType from '../helpers/checkType.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+export const login = async (req, res) => {
+  const { username, email, password } = req.body;
+
+  if (
+    !checkType(username, 'string') ||
+    !checkType(email, 'string') ||
+    !checkType(password, 'string')
+  ) {
+    return res.status(400).json({
+      message: 'Invalid datatype!',
+    });
+  }
+
+  // check if any value in the body is empty
+  if (isEmpty(username) || isEmpty(email) || isEmpty(password)) {
+    return res.status(400).json({
+      error: 'Request body can not be empty!',
+    });
+  }
+
+  try {
+    // check if the user is already registered
+    const data = await user.findOne({
+      email: email,
+      username: username,
+    });
+
+    if (!data) {
+      return res.status(404).json({
+        message: 'Invalid email or username!',
+      });
+    }
+
+    const validate = await bcrypt.compare(password, data.password);
+
+    if (!validate) {
+      return res.status(400).json({
+        message: 'Invalid password!',
+      });
+    }
+
+    const token = jwt.sign(
+      { user_id: data._id, email: data.email, username: data.username },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: '1h',
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      // return jwt
+      token,
+    });
+  } catch (error) {
+    // Handle errors, e.g., log the error or send an error response
+    res.status(500).json({
+      message: 'An error occurred during login.',
+    });
+  }
+};
+
+export const register = async (req, res) => {
+  const { username, email, password } = req.body;
+
+  if (
+    !checkType(username, 'string') ||
+    !checkType(email, 'string') ||
+    !checkType(password, 'string')
+  ) {
+    return res.status(400).json({
+      message: 'Invalid datatype!',
+    });
+  }
+
+  // check if any value in the body is empty
+  if (isEmpty(username) || isEmpty(email) || isEmpty(password)) {
+    return res.status(400).json({
+      error: 'Request body can not be empty!',
+    });
+  }
+
+  try {
+    // check if the user is already registered
+    let userExist = await user.findOne({ email: email });
+
+    if (userExist)
+      return res.status(409).json({
+        message: 'This email is already registered!',
+      });
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = {
+      username: username,
+      email: email,
+      password: encryptedPassword,
+    };
+
+    await user.insertMany(newUser);
+
+    res.status(201).json({
+      message: 'Register Success!',
+    });
+  } catch (error) {
+    console.log('Something went wrong! ', error);
+  }
+};
 
 export const getVideoById = async (req, res) => {
   let { _videoId } = req.params;
