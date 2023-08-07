@@ -4,6 +4,7 @@ import connectToDB from './config/database.js';
 import videoRoutes from './routes/videos.js';
 import productRoutes from './routes/products.js';
 import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
 import cors from 'cors';
 import commentRoutes from './routes/comments.js';
 import { Server } from 'socket.io';
@@ -17,6 +18,7 @@ await connectToDB();
 app.use(Express.json());
 app.use(cors());
 
+app.use('/users', userRoutes);
 app.use('/videos', videoRoutes);
 app.use('/products', productRoutes);
 app.use('/comments', commentRoutes);

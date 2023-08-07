@@ -28,7 +28,8 @@ const Header = () => {
       />
       {/* profile */}
       <img
-        className='w-7 hidden md:block'
+        onClick={() => navigation('/profile')}
+        className='w-7 hidden md:block cursor-pointer'
         src='/profile-pictures/pp.png'
         alt='profile-picture'
       />

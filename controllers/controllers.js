@@ -7,6 +7,32 @@ import checkType from '../helpers/checkType.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+export const getUserById = async (req, res) => {
+  const { _id } = req.params;
+
+  if (!checkType(_id, 'string')) {
+    return res.status(400).json({
+      message: 'Invalid datatype!',
+    });
+  }
+
+  // check if any value in the body is empty
+  if (isEmpty(_id)) {
+    return res.status(400).json({
+      error: 'Request body can not be empty!',
+    });
+  }
+
+  try {
+    const response = await user.findById(_id);
+    return res.status(200).json({
+      user: response,
+    });
+  } catch (error) {
+    res.status(404).json({ message: 'User not found!' });
+  }
+};
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
