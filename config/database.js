@@ -13,7 +13,7 @@ const connectToDB = async () => {
 
     let videos = await video.count();
     let products = await product.count();
-    let comments = await comment.count();
+    // let comments = await comment.count();
 
     // let products = await product.deleteMany({});
     // let videos = await video.deleteMany({});
@@ -29,10 +29,10 @@ const connectToDB = async () => {
       console.log('Products Populated!');
     }
 
-    if (comments === 0) {
-      await populateComments();
-      console.log('Comments Populated!');
-    }
+    // if (comments === 0) {
+    //   await populateComments();
+    //   console.log('Comments Populated!');
+    // }
   } catch (error) {
     console.log(error);
   }

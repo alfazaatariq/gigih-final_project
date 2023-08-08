@@ -14,13 +14,14 @@ const ProfilePage = () => {
   const isLoggedIn = checkAuthStatus();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Users>({
+    profilePicture: '',
     _id: '',
     username: '',
     email: '',
   });
 
   useEffect(() => {
-    fetchUserByID();
+    fetchUserByToken();
   }, []);
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const ProfilePage = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  const fetchUserByID = async () => {
+  const fetchUserByToken = async () => {
     const token: string | null = sessionStorage.getItem('token');
 
     if (token) {
@@ -39,7 +40,13 @@ const ProfilePage = () => {
           `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`
         );
 
-        setProfile(res.data.user);
+        setProfile((previous) => ({
+          ...previous,
+          _id: res.data.user._id,
+          email: res.data.user.email,
+          username: res.data.user.username,
+          profilePicture: res.data.user.profilePicture,
+        }));
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.status);

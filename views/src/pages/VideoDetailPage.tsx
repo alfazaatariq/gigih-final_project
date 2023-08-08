@@ -1,3 +1,4 @@
+import checkAuthStatus from '../../helpers/checkAuthStatus';
 import extractVideoID from '../../helpers/extractVideoID';
 import React, { useEffect, useState, useRef } from 'react';
 import PageLayout from '../layouts/PageLayout';
@@ -15,29 +16,36 @@ import { useNavigate } from 'react-router-dom';
 import ProductsList from '../components/products-list/ProductsList';
 import CommentsList from '../components/comments-list/CommentsList';
 import sortComments from '../../helpers/sortComments';
+import Header from '../components/header/Header';
+import jwtDecode from 'jwt-decode';
+import Token from '../../interfaces/token';
 
 const socket = io(`${config.baseURL}:${config.port}`, {
   transports: ['websocket'],
 });
 
 const VideoDetailPage = () => {
+  const isLoggedIn = checkAuthStatus();
   const commentRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const videoID = location.pathname.split('/video/')[1];
+  const [isCommenting, setIsCommenting] = useState(false);
+  const [products, setProducts] = useState<Products[]>([]);
+  const [comments, setComments] = useState<Comments[]>([]);
   const [videoDetail, setVideoDetail] = useState<VideoDetail>({
     _id: '',
     imageUrl: '',
     __v: 0,
   });
-  const [products, setProducts] = useState<Products[]>([]);
-  const [comments, setComments] = useState<Comments[]>([]);
+
   const [newComment, setNewComment] = useState<NewComment>({
     _videoId: videoID,
-    username: 'Testing',
+    _userId: '',
+    isAnon: true,
+    username: '',
     comment: '',
   });
-  const [isCommenting, setIsCommenting] = useState(false);
   const youtubeID = extractVideoID(videoDetail.imageUrl);
 
   useEffect(() => {
@@ -56,6 +64,7 @@ const VideoDetailPage = () => {
 
   useEffect(() => {
     // Call the fetchVideoByID function when the component mounts
+    fetchUserByToken();
     fetchVideoByID(videoID);
     fetchProductsByID(videoID);
     fetchCommentsByID(videoID);
@@ -78,7 +87,10 @@ const VideoDetailPage = () => {
     event.preventDefault();
 
     try {
-      await axios.post(`${config.baseURL}:${config.port}/comments`, newComment);
+      await axios.post(
+        `${config.baseURL}:${config.port}/comments/${videoID}`,
+        newComment
+      );
       const res = await axios.get(
         `${config.baseURL}:${config.port}/comments/${videoID}`
       );
@@ -87,11 +99,18 @@ const VideoDetailPage = () => {
 
       socket.emit('comment', sortedComments, videoID);
 
-      setNewComment((previous) => ({
-        ...previous,
-        username: '',
-        comment: '',
-      }));
+      if (isLoggedIn) {
+        setNewComment((previous) => ({
+          ...previous,
+          comment: '',
+        }));
+      } else {
+        setNewComment((previous) => ({
+          ...previous,
+          username: '',
+          comment: '',
+        }));
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.status);
@@ -117,6 +136,40 @@ const VideoDetailPage = () => {
       ...previous,
       username: event.target.value,
     }));
+  };
+
+  const fetchUserByToken = async () => {
+    const token: string | null = sessionStorage.getItem('token');
+
+    if (token) {
+      const decodedToken: Token = jwtDecode(token);
+      try {
+        const res = await axios.post(
+          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`
+        );
+
+        console.log(res);
+
+        setNewComment((previous) => ({
+          ...previous,
+          _userId: res.data.user._id,
+          isAnon: false,
+          username: res.data.user.username,
+        }));
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.status);
+        } else {
+          console.error('Unknown error occurred:', error);
+        }
+      }
+    } else {
+      console.log('Token not available.'); // Handle the case where token is null
+      setNewComment((previous) => ({
+        ...previous,
+        _userId: '',
+      }));
+    }
   };
 
   const fetchCommentsByID = async (videoID: string) => {
@@ -169,10 +222,11 @@ const VideoDetailPage = () => {
     <>
       <PageLayout>
         {/* Display the video details */}
+        <Header />
         <div className='w-full relative -top-8 sm:top-4'>
           <YoutubeFrame youtubeID={youtubeID} />
 
-          <div>
+          <div className='mt-2'>
             <div className='text-white'>
               <div
                 onClick={() => navigate('/')}
@@ -188,16 +242,20 @@ const VideoDetailPage = () => {
           {/* comments */}
           <div className='mt-4'>
             <form className='space-y-4 my-4' onSubmit={onSubmitHandler}>
-              <input
-                type='text'
-                name='username'
-                id='username'
-                maxLength={10}
-                placeholder='username'
-                required
-                value={newComment.username}
-                onChange={onChangeUsernameHandler}
-              />
+              {isLoggedIn ? (
+                <></>
+              ) : (
+                <input
+                  type='text'
+                  name='username'
+                  id='username'
+                  maxLength={10}
+                  placeholder='username'
+                  required
+                  value={newComment.username}
+                  onChange={onChangeUsernameHandler}
+                />
+              )}
               <div ref={commentRef}>
                 <textarea
                   onClick={() => setIsCommenting(!isCommenting)}

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../../config/config';
 import jwtDecode from 'jwt-decode';
@@ -8,19 +8,22 @@ import Token from '../../../interfaces/token';
 import checkAuthStatus from '../../../helpers/checkAuthStatus';
 
 const Header = () => {
+  const location = useLocation();
+  const currentPath = location.pathname;
   const isLoggedIn = checkAuthStatus();
   const navigation = useNavigate();
   const [profile, setProfile] = useState<Users>({
+    profilePicture: '',
     _id: '',
     email: '',
     username: '',
   });
 
   useEffect(() => {
-    fetchUserByID();
+    fetchUserByToken();
   }, []);
 
-  const fetchUserByID = async () => {
+  const fetchUserByToken = async () => {
     const token: string | null = sessionStorage.getItem('token');
 
     if (token) {
@@ -30,7 +33,13 @@ const Header = () => {
           `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`
         );
 
-        setProfile(res.data.user);
+        setProfile((previous) => ({
+          ...previous,
+          _id: res.data.user._id,
+          email: res.data.user.email,
+          username: res.data.user.username,
+          profilePicture: res.data.user.profilePicture,
+        }));
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response?.status);
@@ -54,15 +63,25 @@ const Header = () => {
       {/* profile */}
       <div
         onClick={() => navigation('/profile')}
-        className='flex hover:opacity-40 space-x-2 items-center cursor-pointer'
+        className={`flex hover:opacity-40 space-x-2 items-center cursor-pointer ${
+          currentPath.includes('/profile') ? 'invisible' : 'visible'
+        }`}
       >
         <span className='text-white text-sm'>
-          {isLoggedIn ? profile.username : ''}
+          {isLoggedIn ? (
+            profile.username
+          ) : (
+            <p className='underline underline-offset-4'>Sign In</p>
+          )}
         </span>
         <img
           onClick={() => navigation('/profile')}
           className='w-7  rounded-md md:block'
-          src='/profile-pictures/pp.png'
+          src={
+            profile.profilePicture
+              ? profile.profilePicture
+              : '/profile-pictures/default.png'
+          }
           alt='profile-picture'
         />
       </div>

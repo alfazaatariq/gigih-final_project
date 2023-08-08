@@ -16,6 +16,7 @@ configDotenv();
 await connectToDB();
 
 app.use(Express.json());
+app.use(Express.static('public'));
 app.use(cors());
 
 app.use('/users', userRoutes);

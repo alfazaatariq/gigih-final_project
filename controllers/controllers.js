@@ -121,7 +121,10 @@ export const register = async (req, res) => {
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
+    const url = req.protocol + '://' + req.get('host');
+
     const newUser = {
+      profilePicture: `${url}/files/default.jpg`,
       username: username,
       email: email,
       password: encryptedPassword,
@@ -266,19 +269,20 @@ export const getCommentsById = async (req, res) => {
 };
 
 export const submitComment = async (req, res) => {
-  const { _videoId, username, comment: userComment } = req.body;
+  const { _userId, isAnon, username, comment: userComment } = req.body;
+  const { _videoId } = req.params;
 
   if (
     !checkType(username, 'string') ||
     !checkType(userComment, 'string') ||
-    !checkType(_videoId, 'string')
+    !checkType(_videoId, 'string') ||
+    !checkType(isAnon, 'boolean')
   ) {
     return res.status(400).json({
       message: 'Invalid datatype!',
     });
   }
 
-  // check if any value in the body is empty
   if (isEmpty(username) || isEmpty(userComment) || isEmpty(_videoId)) {
     return res.status(400).json({
       error: 'Request body can not be empty!',
@@ -286,30 +290,72 @@ export const submitComment = async (req, res) => {
   }
 
   try {
-    // check if video existed
-    let videoExist = await video.findOne({ _id: _videoId });
+    const videoExist = await video.findOne({ _id: _videoId });
 
-    if (videoExist) {
-      let payload = {
-        _videoId: _videoId.trim(),
-        username: username.trim(),
-        comment: userComment.trim(),
-      };
+    if (!videoExist) {
+      return res.status(404).json({
+        message: 'Video not found!',
+      });
+    }
 
-      try {
-        await comment.insertMany(payload);
-        return res.status(201).json({
-          message: 'Comment added successfully!',
-        });
-      } catch (error) {
-        res.status(400).json({
-          message: 'Comment can not be added!',
+    let payload = {
+      _videoId: _videoId.trim(),
+      username: username.trim(),
+      comment: userComment.trim(),
+      isAnon: isAnon, // Set the isAnon field in the payload
+    };
+
+    if (!isAnon) {
+      const userExist = await user.findOne({ _id: _userId, username });
+
+      if (!userExist) {
+        return res.status(404).json({
+          message: 'User not found!',
         });
       }
+
+      payload._userId = _userId.trim();
     }
-  } catch (error) {
-    res.status(404).json({
-      message: 'Video not found!',
+
+    await comment.insertMany(payload);
+
+    return res.status(201).json({
+      message: 'Comment added successfully!',
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Something went wrong!',
+    });
+  }
+};
+
+export const updateProfilePicture = async (req, res) => {
+  const { _id } = req.params;
+  const url = req.protocol + '://' + req.get('host');
+
+  if (!checkType(_id, 'string')) {
+    return res.status(400).json({
+      message: 'Invalid data type!',
+    });
+  }
+
+  if (isEmpty(_id)) {
+    return res.status(400).json({
+      message: 'Request body can not be empty!',
+    });
+  }
+
+  try {
+    let payload = {
+      profilePicture: url + req.file.filename,
+    };
+
+    await user.findByIdAndUpdate(_id, payload);
+
+    res.status(200).json({ message: 'Profile picture updated!' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Something went wrong!' });
   }
 };
