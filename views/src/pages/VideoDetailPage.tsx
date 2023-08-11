@@ -41,11 +41,13 @@ const VideoDetailPage = () => {
 
   const [newComment, setNewComment] = useState<NewComment>({
     _videoId: videoID,
+    profilePicture: '',
     _userId: '',
     isAnon: true,
     username: '',
     comment: '',
   });
+
   const youtubeID = extractVideoID(videoDetail.imageUrl);
 
   useEffect(() => {
@@ -127,6 +129,8 @@ const VideoDetailPage = () => {
       ...previous,
       comment: event.target.value,
     }));
+    event.target.style.height = 'auto';
+    event.target.style.height = `${event.target.scrollHeight}px`;
   };
 
   const onChangeUsernameHandler = (
@@ -153,6 +157,7 @@ const VideoDetailPage = () => {
         setNewComment((previous) => ({
           ...previous,
           _userId: res.data.user._id,
+          profilePicture: res.data.user.profilePicture,
           isAnon: false,
           username: res.data.user.username,
         }));
@@ -168,6 +173,7 @@ const VideoDetailPage = () => {
       setNewComment((previous) => ({
         ...previous,
         _userId: '',
+        profilePicture: 'default.jpg',
       }));
     }
   };
@@ -230,7 +236,7 @@ const VideoDetailPage = () => {
             <div className='text-white'>
               <div
                 onClick={() => navigate('/')}
-                className='w-8 cursor-pointer hover:bg-slate-400'
+                className='w-8 cursor-pointer hover:opacity-40'
               >
                 <BackButton color='white' />
               </div>
@@ -249,25 +255,41 @@ const VideoDetailPage = () => {
                   type='text'
                   name='username'
                   id='username'
-                  maxLength={10}
+                  maxLength={20}
                   placeholder='username'
                   required
+                  autoComplete='off'
                   value={newComment.username}
+                  className='w-full bg-transparent outline-none border-b border-slate-600 text-white pt-2 focus:border-slate-100 transition duration-150 ease-linear resize-none'
                   onChange={onChangeUsernameHandler}
                 />
               )}
               <div ref={commentRef}>
-                <textarea
-                  onClick={() => setIsCommenting(!isCommenting)}
-                  name='comment'
-                  id='comment'
-                  rows={1}
-                  placeholder='add a comment...'
-                  required
-                  value={newComment.comment}
-                  onChange={onChangeCommentHandler}
-                  className='w-full bg-transparent outline-none border-b border-slate-600 text-white pt-2 focus:border-slate-100 transition duration-150 ease-linear resize-none'
-                ></textarea>
+                <div className={isLoggedIn ? 'flex space-x-2' : ''}>
+                  <img
+                    className={`w-7 h-7 object-cover rounded-lg ${
+                      isLoggedIn ? '' : 'hidden'
+                    }`}
+                    src={newComment.profilePicture}
+                    alt={`${newComment.username} Profile Picture`}
+                  />
+                  <textarea
+                    onClick={() => setIsCommenting(!isCommenting)}
+                    name='comment'
+                    id='comment'
+                    rows={1}
+                    maxLength={4500}
+                    placeholder='add a comment...'
+                    required
+                    value={newComment.comment}
+                    onChange={onChangeCommentHandler}
+                    className={`w-full ${
+                      !isCommenting ? 'overflow-hidden' : 'overflow-auto'
+                    } ${
+                      newComment.comment.length > 0 ? 'max-h-64' : 'max-h-7'
+                    } bg-transparent outline-none border-b border-slate-600 text-white pt-2 focus:border-slate-100 transition duration-150 ease-linear resize-none`}
+                  ></textarea>
+                </div>
 
                 <div
                   className={
@@ -279,7 +301,13 @@ const VideoDetailPage = () => {
                   <button
                     className='bg-transparent text-white rounded-xl px-2 py-1 text-sm hover:bg-slate-400'
                     type='button'
-                    onClick={() => setIsCommenting(!isCommenting)}
+                    onClick={() => {
+                      setIsCommenting(!isCommenting);
+                      setNewComment((previous) => ({
+                        ...previous,
+                        comment: '',
+                      }));
+                    }}
                   >
                     Cancel
                   </button>

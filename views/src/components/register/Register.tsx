@@ -70,6 +70,7 @@ const Register = () => {
           name='username'
           id='username'
           placeholder='Username'
+          maxLength={20}
           required
           onChange={onChangeUsernameHandler}
         />
@@ -77,6 +78,7 @@ const Register = () => {
           className='rounded-md px-2 outline-blue-400 text-slate-800'
           type='text'
           name='email'
+          maxLength={35}
           id='email'
           placeholder='Email'
           required
@@ -89,6 +91,7 @@ const Register = () => {
             name='password'
             id='password'
             placeholder='Password'
+            maxLength={20}
             required
             onChange={onChangePasswordHandler}
           />

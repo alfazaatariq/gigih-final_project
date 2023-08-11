@@ -15,6 +15,7 @@ const commentsSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    profilePicture: String,
     username: String,
     comment: String,
   },

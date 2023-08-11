@@ -76,7 +76,7 @@ const Header = () => {
         </span>
         <img
           onClick={() => navigation('/profile')}
-          className='w-7  rounded-md md:block'
+          className='w-7 h-7 object-cover rounded-md md:block'
           src={
             profile.profilePicture
               ? profile.profilePicture

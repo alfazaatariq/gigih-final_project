@@ -18,6 +18,7 @@ const connectToDB = async () => {
     // let products = await product.deleteMany({});
     // let videos = await video.deleteMany({});
     // let comments = await comment.deleteMany({});
+    // let users = await user.deleteMany({});
 
     if (videos === 0) {
       await populateVideos();

@@ -257,6 +257,8 @@ export const getCommentsById = async (req, res) => {
         return commentFiltered;
       });
 
+      console.log(comments);
+
       return res.status(200).json({
         comments: comments,
       });
@@ -269,13 +271,20 @@ export const getCommentsById = async (req, res) => {
 };
 
 export const submitComment = async (req, res) => {
-  const { _userId, isAnon, username, comment: userComment } = req.body;
+  const {
+    _userId,
+    isAnon,
+    username,
+    comment: userComment,
+    profilePicture,
+  } = req.body;
   const { _videoId } = req.params;
 
   if (
     !checkType(username, 'string') ||
     !checkType(userComment, 'string') ||
     !checkType(_videoId, 'string') ||
+    !checkType(profilePicture, 'string') ||
     !checkType(isAnon, 'boolean')
   ) {
     return res.status(400).json({
@@ -283,7 +292,12 @@ export const submitComment = async (req, res) => {
     });
   }
 
-  if (isEmpty(username) || isEmpty(userComment) || isEmpty(_videoId)) {
+  if (
+    isEmpty(username) ||
+    isEmpty(userComment) ||
+    isEmpty(_videoId) ||
+    isEmpty(profilePicture)
+  ) {
     return res.status(400).json({
       error: 'Request body can not be empty!',
     });
@@ -298,10 +312,13 @@ export const submitComment = async (req, res) => {
       });
     }
 
+    const url = req.protocol + '://' + req.get('host');
+
     let payload = {
       _videoId: _videoId.trim(),
       username: username.trim(),
       comment: userComment.trim(),
+      profilePicture: `${url}/files/${profilePicture.trim()}`,
       isAnon: isAnon, // Set the isAnon field in the payload
     };
 
@@ -315,6 +332,7 @@ export const submitComment = async (req, res) => {
       }
 
       payload._userId = _userId.trim();
+      payload.profilePicture = profilePicture.trim();
     }
 
     await comment.insertMany(payload);
