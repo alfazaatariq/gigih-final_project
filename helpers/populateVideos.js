@@ -27,6 +27,31 @@ const populateVideos = async () => {
         // PS5
         'https://i.ytimg.com/vi/uLwFYPsS_Zc/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA',
     },
+    {
+      imageUrl:
+        // Redmi Note 12 Pro
+        'https://i.ytimg.com/vi/EE8vxw8YF-I/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA',
+    },
+    {
+      imageUrl:
+        // Apple Watch Series 8
+        'https://i.ytimg.com/vi/ZYxz9uAmodg/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA',
+    },
+    {
+      imageUrl:
+        // iPad 9th Gen
+        'https://i.ytimg.com/vi/qGexZ8Vq9tk/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA',
+    },
+    {
+      imageUrl:
+        // Samsung Flip 4
+        'https://i.ytimg.com/vi/blIYSm7L4oY/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA',
+    },
+    {
+      imageUrl:
+        // AirPods Pro 2
+        'https://i.ytimg.com/vi/CHQ6fqsXdig/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA',
+    },
   ];
 
   try {

@@ -2,7 +2,7 @@ import PageLayout from '../layouts/PageLayout';
 import VideosList from '../components/videoslist/VideosList';
 import Header from '../components/header/Header';
 
-function HomePage() {
+const HomePage = () => {
   return (
     <>
       <PageLayout>
@@ -26,6 +26,6 @@ function HomePage() {
       </PageLayout>
     </>
   );
-}
+};
 
 export default HomePage;

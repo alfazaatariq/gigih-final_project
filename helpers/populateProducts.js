@@ -15,9 +15,9 @@ const populateProducts = async () => {
       _videoId: await findVideoId(
         'https://i.ytimg.com/vi/Lvq01WvB5D0/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA'
       ),
-      name: 'casan iphone',
-      link: 'https://tokopedia.link/0dujrW78EBb',
-      price: 2000,
+      name: 'Apple Charger iPhone 20W',
+      link: 'https://tokopedia.link/pR9KX2RvaCb',
+      price: 349000,
     },
     {
       _videoId: await findVideoId(
@@ -50,6 +50,46 @@ const populateProducts = async () => {
       name: 'Playstation 5',
       link: 'https://tokopedia.link/UeD8sAS9EBb',
       price: 6686884,
+    },
+    {
+      _videoId: await findVideoId(
+        'https://i.ytimg.com/vi/EE8vxw8YF-I/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA'
+      ),
+      name: 'Redmi Note 12 Pro',
+      link: 'https://www.tokopedia.com/xiaomi/official-xiaomi-redmi-note-12-pro-kamera-quad-108mp-120hz-layar-amoled-glacier-blue-6gb-128gb-41b3a',
+      price: 3299000,
+    },
+    {
+      _videoId: await findVideoId(
+        'https://i.ytimg.com/vi/ZYxz9uAmodg/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA'
+      ),
+      name: 'Apple Watch Series 8',
+      link: 'https://tokopedia.link/XvjWh7svaCb',
+      price: 6325000,
+    },
+    {
+      _videoId: await findVideoId(
+        'https://i.ytimg.com/vi/qGexZ8Vq9tk/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA'
+      ),
+      name: 'iPad 9th Gen',
+      link: 'https://tokopedia.link/UMLqkvCvaCb',
+      price: 4529000,
+    },
+    {
+      _videoId: await findVideoId(
+        'https://i.ytimg.com/vi/blIYSm7L4oY/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA'
+      ),
+      name: 'Samsung Galaxy Z Flip 4',
+      link: 'https://tokopedia.link/XXwgqSFvaCb',
+      price: 11499000,
+    },
+    {
+      _videoId: await findVideoId(
+        'https://i.ytimg.com/vi/CHQ6fqsXdig/maxresdefault.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS5hqvj82AOzcdNp1ucHJ9ARzFA'
+      ),
+      name: 'Apple AirPods Pro 2',
+      link: 'https://tokopedia.link/bymJz5KvaCb',
+      price: 2994000,
     },
   ];
 

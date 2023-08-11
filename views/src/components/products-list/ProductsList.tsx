@@ -9,7 +9,12 @@ const ProductsList = ({ products }: { products: Products[] }) => {
       >
         {products.map((product) => {
           return (
-            <a className='flex-1' key={product._id} href={product.link}>
+            <a
+              className='flex-1'
+              key={product._id}
+              href={product.link}
+              target='_blank'
+            >
               <li>
                 <div className='text-white bg-slate-700 rounded-lg p-2 cursor-pointer hover:opacity-40'>
                   <p className='line-clamp-1'>{product.name}</p>
