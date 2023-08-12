@@ -23,7 +23,10 @@ const Login = () => {
         data
       );
       sessionStorage.setItem('token', res.data.token);
-      navigate('/');
+      const token: string | null = sessionStorage.getItem('token');
+      if (token) {
+        navigate('/');
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 400)

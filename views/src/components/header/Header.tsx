@@ -1,14 +1,65 @@
+import axios, { CancelToken } from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import checkAuthStatus from '../../../helpers/checkAuthStatus';
-import { AuthContext } from '../../layouts/PageLayout';
-import { useContext } from 'react';
+import Token from '../../../interfaces/token';
+import jwtDecode from 'jwt-decode';
+import Users from '../../../interfaces/users';
+import config from '../../../config/config';
 
 const Header = () => {
-  const Auth = useContext(AuthContext);
   const location = useLocation();
   const currentPath = location.pathname;
   const isLoggedIn = checkAuthStatus();
   const navigation = useNavigate();
+
+  const [profile, setProfile] = useState<Users>({
+    profilePicture: '',
+    _id: '',
+    email: '',
+    username: '',
+  });
+
+  useEffect(() => {
+    const cancelToken = axios.CancelToken.source();
+
+    fetchUserByToken(cancelToken.token);
+
+    return () => {
+      cancelToken.cancel();
+    };
+  }, []);
+
+  const fetchUserByToken = async (cancelToken: CancelToken) => {
+    const token: string | null = sessionStorage.getItem('token');
+
+    if (token) {
+      const decodedToken: Token = jwtDecode(token);
+      try {
+        const res = await axios.post(
+          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`,
+          null,
+          { cancelToken: cancelToken }
+        );
+
+        setProfile((previous) => ({
+          ...previous,
+          _id: res.data.user._id,
+          email: res.data.user.email,
+          username: res.data.user.username,
+          profilePicture: res.data.user.profilePicture,
+        }));
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.status);
+        } else {
+          console.error('Unknown error occurred:', error);
+        }
+      }
+    } else {
+      console.log('Token not available.'); // Handle the case where token is null
+    }
+  };
 
   return (
     <div className='flex items-center justify-between mt-2 flex-wrap space-x-2 mx-2'>
@@ -28,7 +79,7 @@ const Header = () => {
       >
         <span className='text-white text-sm'>
           {isLoggedIn ? (
-            Auth.username
+            profile.username
           ) : (
             <p className='underline underline-offset-4'>Sign In</p>
           )}
@@ -37,8 +88,8 @@ const Header = () => {
           onClick={() => navigation('/profile')}
           className='w-7 h-7 object-cover rounded-md md:block'
           src={
-            Auth.profilePicture
-              ? Auth.profilePicture
+            profile.profilePicture
+              ? profile.profilePicture
               : '/profile-pictures/default.png'
           }
           alt='profile-picture'

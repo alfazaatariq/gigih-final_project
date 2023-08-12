@@ -1,15 +1,63 @@
-import React, { useContext, useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import axios, { CancelToken } from 'axios';
 import config from '../../../config/config';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../layouts/PageLayout';
+import Users from '../../../interfaces/users';
+import jwtDecode from 'jwt-decode';
+import Token from '../../../interfaces/token';
 
 const Profile = () => {
-  const Auth = useContext(AuthContext);
+  const [profile, setProfile] = useState<Users>({
+    profilePicture: '',
+    _id: '',
+    email: '',
+    username: '',
+  });
   const [updatedProfilePicture, setUpdatedProfilePicture] = useState<
     string | null
   >(null);
   const navigation = useNavigate();
+
+  useEffect(() => {
+    const cancelToken = axios.CancelToken.source();
+
+    fetchUserByToken(cancelToken.token);
+
+    return () => {
+      cancelToken.cancel();
+    };
+  }, []);
+
+  const fetchUserByToken = async (cancelToken: CancelToken) => {
+    const token: string | null = sessionStorage.getItem('token');
+
+    if (token) {
+      const decodedToken: Token = jwtDecode(token);
+      try {
+        const res = await axios.post(
+          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`,
+          null,
+          { cancelToken: cancelToken }
+        );
+
+        setProfile((previous) => ({
+          ...previous,
+          _id: res.data.user._id,
+          email: res.data.user.email,
+          username: res.data.user.username,
+          profilePicture: res.data.user.profilePicture,
+        }));
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.status);
+        } else {
+          console.error('Unknown error occurred:', error);
+        }
+      }
+    } else {
+      console.log('Token not available.'); // Handle the case where token is null
+    }
+  };
 
   const onClickChangeProfilePictureHandler = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -20,7 +68,7 @@ const Profile = () => {
 
       try {
         await axios.put(
-          `${config.baseURL}:${config.port}/users/profile-picture/${Auth._id}`,
+          `${config.baseURL}:${config.port}/users/profile-picture/${profile._id}`,
           formData,
           {
             headers: {
@@ -30,7 +78,7 @@ const Profile = () => {
         );
 
         const user = await axios.post(
-          `${config.baseURL}:${config.port}/users/${Auth._id}`
+          `${config.baseURL}:${config.port}/users/${profile._id}`
         );
 
         setUpdatedProfilePicture(user.data.user.profilePicture);
@@ -55,7 +103,7 @@ const Profile = () => {
         <h1 className='text-white'>My Profile</h1>
         <img
           className='w-44 h-44 object-cover mx-auto rounded-lg'
-          src={updatedProfilePicture || Auth.profilePicture}
+          src={updatedProfilePicture || profile.profilePicture}
           alt='profile-picture'
         />
         <form encType='multipart/form-data'>
@@ -81,8 +129,8 @@ const Profile = () => {
         </form>
 
         <div className='text-white'>
-          <p>Username : {Auth.username}</p>
-          <p>Email : {Auth.email}</p>
+          <p>Username : {profile.username}</p>
+          <p>Email : {profile.email}</p>
         </div>
       </div>
     </div>
