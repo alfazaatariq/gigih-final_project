@@ -2,7 +2,7 @@ import checkAuthStatus from '../../helpers/checkAuthStatus';
 import extractVideoID from '../../helpers/extractVideoID';
 import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import axios, { CancelToken } from 'axios';
 import VideoDetail from '../../interfaces/videoDetail';
 import Products from '../../interfaces/products';
 import Comments from '../../interfaces/comments';
@@ -65,10 +65,16 @@ const VideoDetailPage = () => {
 
   useEffect(() => {
     // Call the fetchVideoByID function when the component mounts
-    fetchUserByToken();
-    fetchVideoByID(videoID);
-    fetchProductsByID(videoID);
-    fetchCommentsByID(videoID);
+    const cancelToken = axios.CancelToken.source();
+
+    fetchUserByToken(cancelToken.token);
+    fetchVideoByID(videoID, cancelToken.token);
+    fetchProductsByID(videoID, cancelToken.token);
+    fetchCommentsByID(videoID, cancelToken.token);
+
+    return () => {
+      cancelToken.cancel();
+    };
   }, [videoID]);
 
   useEffect(() => {
@@ -141,17 +147,16 @@ const VideoDetailPage = () => {
     }));
   };
 
-  const fetchUserByToken = async () => {
+  const fetchUserByToken = async (cancelToken: CancelToken) => {
     const token: string | null = sessionStorage.getItem('token');
 
     if (token) {
       const decodedToken: Token = jwtDecode(token);
       try {
         const res = await axios.post(
-          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`
+          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`,
+          { cancelToken: cancelToken }
         );
-
-        console.log(res);
 
         setNewComment((previous) => ({
           ...previous,
@@ -177,10 +182,14 @@ const VideoDetailPage = () => {
     }
   };
 
-  const fetchCommentsByID = async (videoID: string) => {
+  const fetchCommentsByID = async (
+    videoID: string,
+    cancelToken: CancelToken
+  ) => {
     try {
       const res = await axios.get(
-        `${config.baseURL}:${config.port}/comments/${videoID}`
+        `${config.baseURL}:${config.port}/comments/${videoID}`,
+        { cancelToken: cancelToken }
       );
       const sortedComments = sortComments(res.data.comments, 'asc');
       setComments(sortedComments);
@@ -193,10 +202,16 @@ const VideoDetailPage = () => {
     }
   };
 
-  const fetchProductsByID = async (videoID: string) => {
+  const fetchProductsByID = async (
+    videoID: string,
+    cancelToken: CancelToken
+  ) => {
     try {
       const res = await axios.get(
-        `${config.baseURL}:${config.port}/products/${videoID}`
+        `${config.baseURL}:${config.port}/products/${videoID}`,
+        {
+          cancelToken: cancelToken,
+        }
       );
       setProducts(res.data.products);
     } catch (error) {
@@ -208,10 +223,13 @@ const VideoDetailPage = () => {
     }
   };
 
-  const fetchVideoByID = async (videoID: string) => {
+  const fetchVideoByID = async (videoID: string, cancelToken: CancelToken) => {
     try {
       const res = await axios.get(
-        `${config.baseURL}:${config.port}/videos/${videoID}`
+        `${config.baseURL}:${config.port}/videos/${videoID}`,
+        {
+          cancelToken: cancelToken,
+        }
       );
       setVideoDetail(res.data.video);
     } catch (error) {

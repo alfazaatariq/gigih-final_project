@@ -1,7 +1,7 @@
 import React, { ReactNode, createContext, useEffect, useState } from 'react';
 import Users from '../../interfaces/users';
 import Token from '../../interfaces/token';
-import axios from 'axios';
+import axios, { CancelToken } from 'axios';
 import jwtDecode from 'jwt-decode';
 import config from '../../config/config';
 
@@ -25,17 +25,25 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   });
 
   useEffect(() => {
-    fetchUserByToken();
+    const cancelToken = axios.CancelToken.source();
+
+    fetchUserByToken(cancelToken.token);
+
+    return () => {
+      cancelToken.cancel();
+    };
   }, []);
 
-  const fetchUserByToken = async () => {
+  const fetchUserByToken = async (cancelToken: CancelToken) => {
     const token: string | null = sessionStorage.getItem('token');
 
     if (token) {
       const decodedToken: Token = jwtDecode(token);
       try {
         const res = await axios.post(
-          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`
+          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`,
+          null,
+          { cancelToken: cancelToken }
         );
 
         setProfile((previous) => ({

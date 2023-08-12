@@ -1,7 +1,7 @@
 import VideosList from '../components/videoslist/VideosList';
 import Header from '../components/header/Header';
 import { useState, useEffect, createContext } from 'react';
-import axios from 'axios';
+import axios, { CancelToken } from 'axios';
 import Video from '../../interfaces/video';
 import config from '../../config/config';
 
@@ -11,11 +11,19 @@ const HomePage = () => {
   const [videos, setVideos] = useState<Video[]>([]);
 
   useEffect(() => {
-    fetchVideos();
+    const cancelToken = axios.CancelToken.source();
+
+    fetchVideos(cancelToken.token);
+
+    return () => {
+      cancelToken.cancel();
+    };
   }, []);
 
-  const fetchVideos = async () => {
-    const res = await axios.get(`${config.baseURL}:${config.port}/videos`);
+  const fetchVideos = async (cancelToken: CancelToken) => {
+    const res = await axios.get(`${config.baseURL}:${config.port}/videos`, {
+      cancelToken: cancelToken,
+    });
     setVideos(res.data.videos);
   };
 
