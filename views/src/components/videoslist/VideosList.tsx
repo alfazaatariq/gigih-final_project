@@ -1,29 +1,18 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Video from '../../../interfaces/video';
-import config from '../../../config/config';
+import { useContext } from 'react';
+import { VideoContext } from '../../pages/HomePage';
 
 const VideosList = () => {
-  const [videos, setVideos] = useState<Video[]>([]);
+  const Video = useContext(VideoContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchVideos();
-  }, []);
 
   const onClickHandler = (videoID: string) => {
     navigate(`/video/${videoID}`);
   };
 
-  const fetchVideos = async () => {
-    const res = await axios.get(`${config.baseURL}:${config.port}/videos`);
-    setVideos(res.data.videos);
-  };
-
   return (
     <ul className='flex flex-wrap mt-5'>
-      {videos.map((video) => {
+      {Video.map((video) => {
         return (
           <li
             onClick={() => onClickHandler(video._id)}

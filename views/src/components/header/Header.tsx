@@ -1,56 +1,15 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import config from '../../../config/config';
-import jwtDecode from 'jwt-decode';
-import { useState, useEffect } from 'react';
-import Users from '../../../interfaces/users';
-import Token from '../../../interfaces/token';
 import checkAuthStatus from '../../../helpers/checkAuthStatus';
+import { AuthContext } from '../../layouts/PageLayout';
+import { useContext } from 'react';
 
 const Header = () => {
+  const Auth = useContext(AuthContext);
   const location = useLocation();
   const currentPath = location.pathname;
   const isLoggedIn = checkAuthStatus();
   const navigation = useNavigate();
-  const [profile, setProfile] = useState<Users>({
-    profilePicture: '',
-    _id: '',
-    email: '',
-    username: '',
-  });
 
-  useEffect(() => {
-    fetchUserByToken();
-  }, []);
-
-  const fetchUserByToken = async () => {
-    const token: string | null = sessionStorage.getItem('token');
-
-    if (token) {
-      const decodedToken: Token = jwtDecode(token);
-      try {
-        const res = await axios.post(
-          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`
-        );
-
-        setProfile((previous) => ({
-          ...previous,
-          _id: res.data.user._id,
-          email: res.data.user.email,
-          username: res.data.user.username,
-          profilePicture: res.data.user.profilePicture,
-        }));
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response?.status);
-        } else {
-          console.error('Unknown error occurred:', error);
-        }
-      }
-    } else {
-      console.log('Token not available.'); // Handle the case where token is null
-    }
-  };
   return (
     <div className='flex items-center justify-between mt-2 flex-wrap space-x-2 mx-2'>
       {/* logo */}
@@ -69,7 +28,7 @@ const Header = () => {
       >
         <span className='text-white text-sm'>
           {isLoggedIn ? (
-            profile.username
+            Auth.username
           ) : (
             <p className='underline underline-offset-4'>Sign In</p>
           )}
@@ -78,8 +37,8 @@ const Header = () => {
           onClick={() => navigation('/profile')}
           className='w-7 h-7 object-cover rounded-md md:block'
           src={
-            profile.profilePicture
-              ? profile.profilePicture
+            Auth.profilePicture
+              ? Auth.profilePicture
               : '/profile-pictures/default.png'
           }
           alt='profile-picture'

@@ -1,11 +1,27 @@
-import PageLayout from '../layouts/PageLayout';
 import VideosList from '../components/videoslist/VideosList';
 import Header from '../components/header/Header';
+import { useState, useEffect, createContext } from 'react';
+import axios from 'axios';
+import Video from '../../interfaces/video';
+import config from '../../config/config';
+
+export const VideoContext = createContext<Video[]>([]);
 
 const HomePage = () => {
+  const [videos, setVideos] = useState<Video[]>([]);
+
+  useEffect(() => {
+    fetchVideos();
+  }, []);
+
+  const fetchVideos = async () => {
+    const res = await axios.get(`${config.baseURL}:${config.port}/videos`);
+    setVideos(res.data.videos);
+  };
+
   return (
     <>
-      <PageLayout>
+      <VideoContext.Provider value={videos}>
         <Header />
         {/* search */}
         <div className='flex mt-4 space-x-2 mx-2'>
@@ -16,14 +32,9 @@ const HomePage = () => {
             placeholder='Search videos you are looking for'
             id='search'
           />
-          {/* <img
-            className='w-7 h-7 cursor-pointer hover:bg-slate-500 rounded-md transition duration-150 ease-in-out p-1'
-            src='/search/search-icon.png'
-            alt='search'
-          /> */}
         </div>
         <VideosList />
-      </PageLayout>
+      </VideoContext.Provider>
     </>
   );
 };

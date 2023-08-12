@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import config from '../../../config/config';
-import Users from '../../../interfaces/users';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../layouts/PageLayout';
 
-const Profile = ({ profile }: { profile: Users }) => {
+const Profile = () => {
+  const Auth = useContext(AuthContext);
   const [updatedProfilePicture, setUpdatedProfilePicture] = useState<
     string | null
   >(null);
@@ -19,7 +20,7 @@ const Profile = ({ profile }: { profile: Users }) => {
 
       try {
         await axios.put(
-          `${config.baseURL}:${config.port}/users/profile-picture/${profile._id}`,
+          `${config.baseURL}:${config.port}/users/profile-picture/${Auth._id}`,
           formData,
           {
             headers: {
@@ -29,7 +30,7 @@ const Profile = ({ profile }: { profile: Users }) => {
         );
 
         const user = await axios.post(
-          `${config.baseURL}:${config.port}/users/${profile._id}`
+          `${config.baseURL}:${config.port}/users/${Auth._id}`
         );
 
         setUpdatedProfilePicture(user.data.user.profilePicture);
@@ -54,7 +55,7 @@ const Profile = ({ profile }: { profile: Users }) => {
         <h1 className='text-white'>My Profile</h1>
         <img
           className='w-44 h-44 object-cover mx-auto rounded-lg'
-          src={updatedProfilePicture || profile.profilePicture}
+          src={updatedProfilePicture || Auth.profilePicture}
           alt='profile-picture'
         />
         <form encType='multipart/form-data'>
@@ -80,8 +81,8 @@ const Profile = ({ profile }: { profile: Users }) => {
         </form>
 
         <div className='text-white'>
-          <p>Username : {profile.username}</p>
-          <p>Email : {profile.email}</p>
+          <p>Username : {Auth.username}</p>
+          <p>Email : {Auth.email}</p>
         </div>
       </div>
     </div>
