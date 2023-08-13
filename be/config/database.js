@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import video from '../models/videos.js';
 import product from '../models/products.js';
 import comment from '../models/comments.js';
+import user from '../models/users.js';
 import populateVideos from '../helpers/populateVideos.js';
 import populateProducts from '../helpers/populateProducts.js';
 import populateComments from '../helpers/populateComments.js';
