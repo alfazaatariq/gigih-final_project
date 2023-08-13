@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Login from '../../../interfaces/login';
-import config from '../../../config/config';
 import axios from 'axios';
 import SeePasswordButton from '../buttons/SeePasswordButton';
 
@@ -19,7 +18,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        `${config.baseURL}:${config.port}/auth/login`,
+        `${import.meta.env.VITE_BASE_URL}/auth/login`,
         data
       );
       sessionStorage.setItem('token', res.data.token);

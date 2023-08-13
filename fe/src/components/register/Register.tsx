@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Register from '../../../interfaces/register';
 import { useState } from 'react';
-import config from '../../../config/config';
 import axios from 'axios';
 import SeePasswordButton from '../buttons/SeePasswordButton';
 
@@ -19,7 +18,7 @@ const Register = () => {
     event.preventDefault();
 
     try {
-      await axios.post(`${config.baseURL}:${config.port}/auth/register`, data);
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/register`, data);
       navigate('/login');
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -8,7 +8,6 @@ import Products from '../../interfaces/products';
 import Comments from '../../interfaces/comments';
 import NewComment from '../../interfaces/newComment';
 import { io } from 'socket.io-client';
-import config from '../../config/config';
 import YoutubeFrame from '../components/iframe/YoutubeFrame';
 import BackButton from '../components/buttons/BackButton';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +18,7 @@ import Header from '../components/header/Header';
 import jwtDecode from 'jwt-decode';
 import Token from '../../interfaces/token';
 
-const socket = io(`${config.baseURL}:${config.port}`, {
+const socket = io(`${import.meta.env.VITE_BASE_URL}`, {
   transports: ['websocket'],
 });
 
@@ -95,11 +94,11 @@ const VideoDetailPage = () => {
 
     try {
       await axios.post(
-        `${config.baseURL}:${config.port}/comments/${videoID}`,
+        `${import.meta.env.VITE_BASE_URL}/comments/${videoID}`,
         newComment
       );
       const res = await axios.get(
-        `${config.baseURL}:${config.port}/comments/${videoID}`
+        `${import.meta.env.VITE_BASE_URL}/comments/${videoID}`
       );
 
       const sortedComments = sortComments(res.data.comments, 'asc');
@@ -154,7 +153,7 @@ const VideoDetailPage = () => {
       const decodedToken: Token = jwtDecode(token);
       try {
         const res = await axios.post(
-          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`,
+          `${import.meta.env.VITE_BASE_URL}/users/${decodedToken.user_id}`,
           { cancelToken: cancelToken }
         );
 
@@ -188,8 +187,10 @@ const VideoDetailPage = () => {
   ) => {
     try {
       const res = await axios.get(
-        `${config.baseURL}:${config.port}/comments/${videoID}`,
-        { cancelToken: cancelToken }
+        `${import.meta.env.VITE_BASE_URL}/comments/${videoID}`,
+        {
+          cancelToken: cancelToken,
+        }
       );
       const sortedComments = sortComments(res.data.comments, 'asc');
       setComments(sortedComments);
@@ -208,7 +209,7 @@ const VideoDetailPage = () => {
   ) => {
     try {
       const res = await axios.get(
-        `${config.baseURL}:${config.port}/products/${videoID}`,
+        `${import.meta.env.VITE_BASE_URL}/products/${videoID}`,
         {
           cancelToken: cancelToken,
         }
@@ -226,7 +227,7 @@ const VideoDetailPage = () => {
   const fetchVideoByID = async (videoID: string, cancelToken: CancelToken) => {
     try {
       const res = await axios.get(
-        `${config.baseURL}:${config.port}/videos/${videoID}`,
+        `${import.meta.env.VITE_BASE_URL}/videos/${videoID}`,
         {
           cancelToken: cancelToken,
         }

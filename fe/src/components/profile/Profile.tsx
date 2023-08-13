@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios, { CancelToken } from 'axios';
-import config from '../../../config/config';
 import { useNavigate } from 'react-router-dom';
 import Users from '../../../interfaces/users';
 import jwtDecode from 'jwt-decode';
@@ -35,7 +34,7 @@ const Profile = () => {
       const decodedToken: Token = jwtDecode(token);
       try {
         const res = await axios.post(
-          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`,
+          `${import.meta.env.VITE_BASE_URL}/users/${decodedToken.user_id}`,
           null,
           { cancelToken: cancelToken }
         );
@@ -68,7 +67,9 @@ const Profile = () => {
 
       try {
         await axios.put(
-          `${config.baseURL}:${config.port}/users/profile-picture/${profile._id}`,
+          `${import.meta.env.VITE_BASE_URL}/users/profile-picture/${
+            profile._id
+          }`,
           formData,
           {
             headers: {
@@ -78,7 +79,7 @@ const Profile = () => {
         );
 
         const user = await axios.post(
-          `${config.baseURL}:${config.port}/users/${profile._id}`
+          `${import.meta.env.VITE_BASE_URL}/users/${profile._id}`
         );
 
         setUpdatedProfilePicture(user.data.user.profilePicture);

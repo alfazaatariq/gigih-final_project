@@ -5,7 +5,6 @@ import checkAuthStatus from '../../../helpers/checkAuthStatus';
 import Token from '../../../interfaces/token';
 import jwtDecode from 'jwt-decode';
 import Users from '../../../interfaces/users';
-import config from '../../../config/config';
 
 const Header = () => {
   const location = useLocation();
@@ -37,7 +36,7 @@ const Header = () => {
       const decodedToken: Token = jwtDecode(token);
       try {
         const res = await axios.post(
-          `${config.baseURL}:${config.port}/users/${decodedToken.user_id}`,
+          `${import.meta.env.VITE_BASE_URL}/users/${decodedToken.user_id}`,
           null,
           { cancelToken: cancelToken }
         );

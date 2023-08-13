@@ -3,7 +3,6 @@ import Header from '../components/header/Header';
 import { useState, useEffect, createContext } from 'react';
 import axios, { CancelToken } from 'axios';
 import Video from '../../interfaces/video';
-import config from '../../config/config';
 import useDebounce from '../../hooks/useDebounce';
 
 export const VideoContext = createContext<Video[]>([]);
@@ -20,7 +19,7 @@ const HomePage = () => {
     const fetchVideos = async (cancelToken: CancelToken) => {
       try {
         const res = await axios.get(
-          `${config.baseURL}:${config.port}/videos?videoName=${debouncedValue}`,
+          `${import.meta.env.VITE_BASE_URL}/videos?videoName=${debouncedValue}`,
           {
             cancelToken: cancelToken,
           }
