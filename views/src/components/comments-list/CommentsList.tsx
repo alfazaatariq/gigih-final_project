@@ -23,7 +23,7 @@ const CommentsList = ({ comments }: { comments: Comments[] }) => {
                 src={comment.profilePicture}
                 alt={`${comment.username} Profile Picture`}
               />
-              <div className='text-white  rounded-lg'>
+              <div className='text-white w-full rounded-lg break-all'>
                 <p
                   className={
                     comment.isAnon ? 'text-red-400' : 'text-yellow-400'
@@ -31,7 +31,7 @@ const CommentsList = ({ comments }: { comments: Comments[] }) => {
                 >
                   {comment.username}
                 </p>
-                <p className='break-words'>
+                <p>
                   {isCollapsed
                     ? comment.comment.slice(0, 250)
                     : comment.comment}{' '}

@@ -10,11 +10,33 @@ export const VideoContext = createContext<Video[]>([]);
 
 const HomePage = () => {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [notFound, setNotFound] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>('');
-  const debouncedValue = useDebounce(searchInput, 1000);
+  const debouncedValue = useDebounce(searchInput, 750);
 
   useEffect(() => {
     const cancelToken = axios.CancelToken.source();
+
+    const fetchVideos = async (cancelToken: CancelToken) => {
+      try {
+        const res = await axios.get(
+          `${config.baseURL}:${config.port}/videos?videoName=${debouncedValue}`,
+          {
+            cancelToken: cancelToken,
+          }
+        );
+        setVideos(res.data.videos);
+        setNotFound(false);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 404) {
+            setNotFound((prevNotFound) => !prevNotFound);
+          }
+        } else {
+          console.error('Unknown error occurred:', error);
+        }
+      }
+    };
 
     fetchVideos(cancelToken.token);
 
@@ -22,13 +44,6 @@ const HomePage = () => {
       cancelToken.cancel();
     };
   }, [debouncedValue]);
-
-  const fetchVideos = async (cancelToken: CancelToken) => {
-    const res = await axios.get(`${config.baseURL}:${config.port}/videos`, {
-      cancelToken: cancelToken,
-    });
-    setVideos(res.data.videos);
-  };
 
   const onSearchVideosHandler = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -51,7 +66,13 @@ const HomePage = () => {
             onChange={onSearchVideosHandler}
           />
         </div>
-        <VideosList />
+        {notFound ? (
+          <div className='flex justify-center items-center text-white pt-64'>
+            <h1>Video not found</h1>
+          </div>
+        ) : (
+          <VideosList />
+        )}
       </VideoContext.Provider>
     </>
   );

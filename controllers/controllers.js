@@ -171,25 +171,33 @@ export const getVideoById = async (req, res) => {
 };
 
 export const getAllVideos = async (req, res) => {
-  let count = await video.count();
+  const { videoName } = req.query;
 
-  if (count > 0) {
-    try {
-      let data = await video.find();
+  try {
+    let query = video.find();
 
-      if (data.length > 0) {
-        return res.status(200).json({
-          videos: data,
-        });
-      }
-    } catch (error) {
-      console.log(error);
+    if (videoName) {
+      const videoNameRegex = new RegExp(videoName, 'i');
+      query = query.where('videoName').regex(videoNameRegex);
     }
-  }
 
-  res.status(404).json({
-    message: 'Its Empty!',
-  });
+    const videos = await query.exec();
+
+    if (videos.length > 0) {
+      return res.status(200).json({
+        videos: videos,
+      });
+    }
+
+    res.status(404).json({
+      message: 'No matching videos found!',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: 'Internal server error',
+    });
+  }
 };
 
 export const getProductsById = async (req, res) => {
