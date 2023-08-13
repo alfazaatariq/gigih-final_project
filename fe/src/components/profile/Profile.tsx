@@ -1,3 +1,4 @@
+import Compressor from 'compressorjs';
 import React, { useState, useEffect } from 'react';
 import axios, { CancelToken } from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -62,34 +63,44 @@ const Profile = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (event.target.files?.[0]) {
-      const formData = new FormData();
-      formData.append('profilePicture', event.target.files[0]);
+      const image = event.target.files[0];
+      new Compressor(image, {
+        quality: 0.5,
+        success: async (compressedImage) => {
+          const formData = new FormData();
+          formData.append(
+            'profilePicture',
+            compressedImage,
+            compressedImage.name
+          );
 
-      try {
-        await axios.put(
-          `${import.meta.env.VITE_BASE_URL}/users/profile-picture/${
-            profile._id
-          }`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+          try {
+            await axios.put(
+              `${import.meta.env.VITE_BASE_URL}/users/profile-picture/${
+                profile._id
+              }`,
+              formData,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              }
+            );
+
+            const user = await axios.post(
+              `${import.meta.env.VITE_BASE_URL}/users/${profile._id}`
+            );
+
+            setUpdatedProfilePicture(user.data.user.profilePicture);
+          } catch (error) {
+            if (axios.isAxiosError(error)) {
+              console.log(error.response?.status);
+            } else {
+              console.error('Unknown error occurred:', error);
+            }
           }
-        );
-
-        const user = await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/users/${profile._id}`
-        );
-
-        setUpdatedProfilePicture(user.data.user.profilePicture);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response?.status);
-        } else {
-          console.error('Unknown error occurred:', error);
-        }
-      }
+        },
+      });
     }
   };
 
