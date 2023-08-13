@@ -83,16 +83,27 @@ const Header = () => {
             <p className='underline underline-offset-4'>Sign In</p>
           )}
         </span>
-        <img
-          onClick={() => navigation('/profile')}
-          className='w-7 h-7 object-cover rounded-md md:block'
-          src={
-            profile.profilePicture
-              ? profile.profilePicture
-              : '/profile-pictures/default.png'
-          }
-          alt='profile-picture'
-        />
+
+        {currentPath === '/profile' ? (
+          ''
+        ) : (
+          <img
+            onClick={() => navigation('/profile')}
+            className={`w-7 h-7 object-cover rounded-md md:block ${
+              isLoggedIn
+                ? profile.profilePicture
+                  ? 'visible'
+                  : 'invisible'
+                : ''
+            }`}
+            src={
+              isLoggedIn
+                ? profile.profilePicture
+                : '/profile-pictures/default.png'
+            }
+            alt='profile-picture'
+          />
+        )}
       </div>
     </div>
   );

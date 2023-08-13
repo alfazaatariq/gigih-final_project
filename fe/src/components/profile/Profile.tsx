@@ -1,10 +1,10 @@
-import Compressor from 'compressorjs';
 import React, { useState, useEffect } from 'react';
 import axios, { CancelToken } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Users from '../../../interfaces/users';
 import jwtDecode from 'jwt-decode';
 import Token from '../../../interfaces/token';
+import { compressAccurately } from 'image-conversion';
 
 const Profile = () => {
   const [profile, setProfile] = useState<Users>({
@@ -64,43 +64,35 @@ const Profile = () => {
   ) => {
     if (event.target.files?.[0]) {
       const image = event.target.files[0];
-      new Compressor(image, {
-        quality: 0.5,
-        success: async (compressedImage) => {
-          const formData = new FormData();
-          formData.append(
-            'profilePicture',
-            compressedImage,
-            compressedImage.name
-          );
+      const compressedImage = await compressAccurately(image, 100);
+      const formData = new FormData();
+      formData.append('profilePicture', compressedImage, image.name);
 
-          try {
-            await axios.put(
-              `${import.meta.env.VITE_BASE_URL}/users/profile-picture/${
-                profile._id
-              }`,
-              formData,
-              {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-              }
-            );
-
-            const user = await axios.post(
-              `${import.meta.env.VITE_BASE_URL}/users/${profile._id}`
-            );
-
-            setUpdatedProfilePicture(user.data.user.profilePicture);
-          } catch (error) {
-            if (axios.isAxiosError(error)) {
-              console.log(error.response?.status);
-            } else {
-              console.error('Unknown error occurred:', error);
-            }
+      try {
+        await axios.put(
+          `${import.meta.env.VITE_BASE_URL}/users/profile-picture/${
+            profile._id
+          }`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
           }
-        },
-      });
+        );
+
+        const user = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/users/${profile._id}`
+        );
+
+        setUpdatedProfilePicture(user.data.user.profilePicture);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.status);
+        } else {
+          console.error('Unknown error occurred:', error);
+        }
+      }
     }
   };
 
@@ -114,7 +106,9 @@ const Profile = () => {
       <div className='text-center space-y-2'>
         <h1 className='text-white'>My Profile</h1>
         <img
-          className='w-44 h-44 object-cover mx-auto rounded-lg'
+          className={`w-44 h-44 object-cover mx-auto rounded-lg ${
+            profile.profilePicture ? 'visible' : 'invisible'
+          }`}
           src={updatedProfilePicture || profile.profilePicture}
           alt='profile-picture'
         />
