@@ -45,10 +45,9 @@ const CommentsList = ({ comments }: { comments: Comments[] }) => {
                   ) : (
                     ''
                   )}
-                  {/* {comment.comment.slice(0, 250)} */}
                 </p>
-                <p>{changeDateFormat(comment.updatedAt, 'time')}</p>
-                <p>{changeDateFormat(comment.updatedAt, 'date')}</p>
+                <p>{changeDateFormat(comment.createdAt, 'time')}</p>
+                <p>{changeDateFormat(comment.createdAt, 'date')}</p>
               </div>
             </li>
           );
