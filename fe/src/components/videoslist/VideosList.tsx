@@ -17,7 +17,7 @@ const VideosList = () => {
           <li
             onClick={() => onClickHandler(video._id)}
             key={video._id}
-            className='w-1/2 p-2 h-60 md:w-1/3 lg:w-1/5 cursor-pointer rounded-lg transition duration-300 ease-in-out group hover:scale-90'
+            className='w-1/2 p-2 h-60 md:w-1/3 lg:w-1/4 xl:w-1/5 cursor-pointer rounded-lg transition duration-300 ease-in-out group hover:scale-90'
           >
             <img
               className='w-full min-h-full object-cover md:object-fill group-hover:opacity-40 rounded-lg'
