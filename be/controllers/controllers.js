@@ -73,7 +73,7 @@ export const login = async (req, res) => {
       { user_id: data._id, email: data.email, username: data.username },
       process.env.SECRET_KEY,
       {
-        expiresIn: '15m',
+        expiresIn: '60m',
       }
     );
 
@@ -378,6 +378,7 @@ export const updateProfilePicture = async (req, res) => {
     };
 
     await user.findByIdAndUpdate(_id, payload);
+    await comment.updateMany({ _userId: _id }, payload);
 
     res.status(200).json({ message: 'Profile picture updated!' });
   } catch (error) {
