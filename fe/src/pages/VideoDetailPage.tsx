@@ -287,7 +287,11 @@ const VideoDetailPage = () => {
               <div className={isLoggedIn ? 'flex space-x-2' : ''}>
                 <img
                   className={`w-7 h-7 object-cover rounded-lg ${
-                    isLoggedIn ? '' : 'hidden'
+                    isLoggedIn
+                      ? newComment.profilePicture
+                        ? ''
+                        : 'invisible'
+                      : 'hidden'
                   }`}
                   src={newComment.profilePicture}
                   alt={`${newComment.username} Profile Picture`}
