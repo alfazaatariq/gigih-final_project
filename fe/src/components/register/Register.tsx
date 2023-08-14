@@ -1,24 +1,26 @@
 import { useNavigate } from 'react-router-dom';
-import Register from '../../../interfaces/register';
 import { useState } from 'react';
 import axios from 'axios';
 import SeePasswordButton from '../buttons/SeePasswordButton';
+import useInput from '../../../hooks/useInput';
 
 const Register = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<Register>({
-    username: '',
-    email: '',
-    password: '',
-  });
   const [error, setError] = useState('');
   const [visible, setVisible] = useState(false);
+  const usernameInput = useInput();
+  const emailInput = useInput();
+  const passwordInput = useInput();
 
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/register`, data);
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/register`, {
+        username: usernameInput.value,
+        email: emailInput.value,
+        password: passwordInput.value,
+      });
       navigate('/login');
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -28,31 +30,6 @@ const Register = () => {
         console.error('Unknown error occurred:', error);
       }
     }
-  };
-
-  const onChangeUsernameHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setData((previous) => ({
-      ...previous,
-      username: event.target.value.trim(),
-    }));
-  };
-
-  const onChangeEmailHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setData((previous) => ({
-      ...previous,
-      email: event.target.value.trim(),
-    }));
-  };
-
-  const onChangePasswordHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setData((previous) => ({
-      ...previous,
-      password: event.target.value.trim(),
-    }));
   };
 
   return (
@@ -71,7 +48,7 @@ const Register = () => {
           placeholder='Username'
           maxLength={20}
           required
-          onChange={onChangeUsernameHandler}
+          {...usernameInput}
         />
         <input
           className='rounded-md px-2 outline-blue-400 text-slate-800'
@@ -81,7 +58,7 @@ const Register = () => {
           id='email'
           placeholder='Email'
           required
-          onChange={onChangeEmailHandler}
+          {...emailInput}
         />
         <div className='flex items-center relative'>
           <input
@@ -92,7 +69,7 @@ const Register = () => {
             placeholder='Password'
             maxLength={20}
             required
-            onChange={onChangePasswordHandler}
+            {...passwordInput}
           />
           <div
             onClick={() => setVisible(!visible)}

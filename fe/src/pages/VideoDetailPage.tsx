@@ -66,6 +66,8 @@ const VideoDetailPage = () => {
     // Call the fetchVideoByID function when the component mounts
     const cancelToken = axios.CancelToken.source();
 
+    window.scrollTo(0, 0);
+
     fetchUserByToken(cancelToken.token);
     fetchVideoByID(videoID, cancelToken.token);
     fetchProductsByID(videoID, cancelToken.token);

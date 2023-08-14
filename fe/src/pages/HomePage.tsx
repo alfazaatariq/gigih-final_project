@@ -4,14 +4,15 @@ import { useState, useEffect, createContext } from 'react';
 import axios, { CancelToken } from 'axios';
 import Video from '../../interfaces/video';
 import useDebounce from '../../hooks/useDebounce';
+import useInput from '../../hooks/useInput';
 
 export const VideoContext = createContext<Video[]>([]);
 
 const HomePage = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [notFound, setNotFound] = useState<boolean>(false);
-  const [searchInput, setSearchInput] = useState<string>('');
-  const debouncedValue = useDebounce(searchInput, 750);
+  const searchInput = useInput();
+  const debouncedValue = useDebounce(searchInput.value, 750);
 
   useEffect(() => {
     const cancelToken = axios.CancelToken.source();
@@ -44,12 +45,6 @@ const HomePage = () => {
     };
   }, [debouncedValue]);
 
-  const onSearchVideosHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchInput(event.target.value);
-  };
-
   return (
     <>
       <VideoContext.Provider value={videos}>
@@ -62,7 +57,7 @@ const HomePage = () => {
             name='search'
             placeholder='Search videos you are looking for'
             id='search'
-            onChange={onSearchVideosHandler}
+            {...searchInput}
           />
         </div>
         {notFound ? (

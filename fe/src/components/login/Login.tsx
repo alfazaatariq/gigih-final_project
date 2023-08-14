@@ -1,17 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Login from '../../../interfaces/login';
 import axios from 'axios';
 import SeePasswordButton from '../buttons/SeePasswordButton';
+import useInput from '../../../hooks/useInput';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState<Login>({
-    email: '',
-    password: '',
-  });
   const [error, setError] = useState('');
   const [visible, setVisible] = useState(false);
+  const emailInput = useInput();
+  const passwordInput = useInput();
 
   const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,7 +17,10 @@ const Login = () => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/login`,
-        data
+        {
+          email: emailInput.value,
+          password: passwordInput.value,
+        }
       );
       sessionStorage.setItem('token', res.data.token);
       const token: string | null = sessionStorage.getItem('token');
@@ -34,22 +35,6 @@ const Login = () => {
         console.error('Unknown error occurred:', error);
       }
     }
-  };
-
-  const onChangeEmailHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setData((previous) => ({
-      ...previous,
-      email: event.target.value.trim(),
-    }));
-  };
-
-  const onChangePasswordHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setData((previous) => ({
-      ...previous,
-      password: event.target.value.trim(),
-    }));
   };
 
   return (
@@ -67,7 +52,7 @@ const Login = () => {
           id='email'
           placeholder='Email'
           required
-          onChange={onChangeEmailHandler}
+          {...emailInput}
         />
         <div className='flex items-center relative'>
           <input
@@ -77,7 +62,7 @@ const Login = () => {
             id='password'
             placeholder='Password'
             required
-            onChange={onChangePasswordHandler}
+            {...passwordInput}
           />
           <div
             onClick={() => setVisible(!visible)}
