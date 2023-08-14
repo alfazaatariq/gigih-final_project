@@ -293,7 +293,8 @@ const VideoDetailPage = () => {
                   alt={`${newComment.username} Profile Picture`}
                 />
                 <textarea
-                  onClick={() => setIsCommenting(!isCommenting)}
+                  // onClick={() => setIsCommenting(!isCommenting)}
+                  onFocus={() => setIsCommenting(true)}
                   name='comment'
                   id='comment'
                   rows={1}
