@@ -17,13 +17,16 @@ const VideosList = () => {
           <li
             onClick={() => onClickHandler(video._id)}
             key={video._id}
-            className='w-1/2 p-2 h-60 md:w-1/3 lg:w-1/5 cursor-pointer hover:opacity-40 rounded-lg transition duration-300 ease-in-out'
+            className='w-1/2 p-2 h-60 md:w-1/3 lg:w-1/5 cursor-pointer rounded-lg transition duration-300 ease-in-out group'
           >
             <img
-              className='w-full min-h-full object-cover rounded-lg'
+              className='w-full min-h-full object-cover group-hover:opacity-40 rounded-lg'
               src={video.imageUrl}
               alt='thumbnail'
             />
+            <p className='text-white opacity-0 text-center relative bottom-32 w-full transition-opacity group-hover:opacity-100 '>
+              {video.videoName}
+            </p>
           </li>
         );
       })}
