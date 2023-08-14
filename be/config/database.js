@@ -5,7 +5,6 @@ import comment from '../models/comments.js';
 import user from '../models/users.js';
 import populateVideos from '../helpers/populateVideos.js';
 import populateProducts from '../helpers/populateProducts.js';
-import populateComments from '../helpers/populateComments.js';
 
 const connectToDB = async () => {
   try {
@@ -14,7 +13,6 @@ const connectToDB = async () => {
 
     let videos = await video.count();
     let products = await product.count();
-    // let comments = await comment.count();
 
     // let products = await product.deleteMany({});
     // let videos = await video.deleteMany({});
@@ -30,11 +28,6 @@ const connectToDB = async () => {
       await populateProducts();
       console.log('Products Populated!');
     }
-
-    // if (comments === 0) {
-    //   await populateComments();
-    //   console.log('Comments Populated!');
-    // }
   } catch (error) {
     console.log(error);
   }
