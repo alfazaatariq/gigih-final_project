@@ -19,7 +19,7 @@ export const getUserById = async (req, res) => {
   // check if any value in the body is empty
   if (isEmpty(_id)) {
     return res.status(400).json({
-      error: 'Request body can not be empty!',
+      error: 'Request params can not be empty!',
     });
   }
 
@@ -151,7 +151,7 @@ export const getVideoById = async (req, res) => {
 
   if (isEmpty(_videoId)) {
     return res.status(400).json({
-      message: 'Request body cannot be empty!',
+      message: 'Request params cannot be empty!',
     });
   }
 
@@ -211,7 +211,7 @@ export const getProductsById = async (req, res) => {
 
   if (isEmpty(_videoId)) {
     return res.status(400).json({
-      message: 'Request body can not be empty!',
+      message: 'Request params can not be empty!',
     });
   }
 
@@ -249,7 +249,7 @@ export const getCommentsById = async (req, res) => {
 
   if (isEmpty(_videoId)) {
     return res.status(400).json({
-      message: 'Request body can not be empty!',
+      message: 'Request params can not be empty!',
     });
   }
 
@@ -264,8 +264,6 @@ export const getCommentsById = async (req, res) => {
         const { _id, _videoId, __v, ...commentFiltered } = comment.toObject();
         return commentFiltered;
       });
-
-      console.log(comments);
 
       return res.status(200).json({
         comments: comments,
@@ -300,12 +298,13 @@ export const submitComment = async (req, res) => {
     });
   }
 
-  if (
-    isEmpty(username) ||
-    isEmpty(userComment) ||
-    isEmpty(_videoId) ||
-    isEmpty(profilePicture)
-  ) {
+  if (isEmpty(_videoId)) {
+    return res.status(400).json({
+      error: 'Request params can not be empty!',
+    });
+  }
+
+  if (isEmpty(username) || isEmpty(userComment) || isEmpty(profilePicture)) {
     return res.status(400).json({
       error: 'Request body can not be empty!',
     });
@@ -368,7 +367,7 @@ export const updateProfilePicture = async (req, res) => {
 
   if (isEmpty(_id)) {
     return res.status(400).json({
-      message: 'Request body can not be empty!',
+      message: 'Request params can not be empty!',
     });
   }
 
@@ -385,4 +384,26 @@ export const updateProfilePicture = async (req, res) => {
     console.log(error);
     res.status(500).json({ message: 'Something went wrong!' });
   }
+};
+
+export const getAllUsers = async (req, res) => {
+  let count = await user.count();
+
+  if (count > 0) {
+    try {
+      let data = await user.find();
+
+      if (data.length > 0) {
+        return res.status(200).json({
+          users: data,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  res.status(404).json({
+    message: 'Its Empty!',
+  });
 };

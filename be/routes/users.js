@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   getUserById,
   updateProfilePicture,
+  getAllUsers,
 } from '../controllers/controllers.js';
 import multer from 'multer';
 
@@ -40,6 +41,7 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
+router.get('/', getAllUsers);
 router.post('/:_id', getUserById);
 router.put(
   '/profile-picture/:_id',

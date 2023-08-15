@@ -8,6 +8,8 @@ dns.setDefaultResultOrder('verbatim');
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: 'localhost',
+    host: true,
+    strictPort: true,
+    port: 2222, //set to your desired port
   },
 });
