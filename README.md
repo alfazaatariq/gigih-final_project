@@ -1,6 +1,7 @@
 # Shopedia (Tokopedia Play Clone)
 
 This is a final project for Generasi GIGIH 3.0 for Fullstack Engineering Track
+see the demo [here](https://gigih-final-al.vercel.app/)
 
 ## Tech Stack
 
