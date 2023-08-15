@@ -19,6 +19,8 @@ This app built using the MERN stack (MongoDB, Express, React, Node.js) with Vite
   - Profile Page :
     - Show user profile information
     - User can change profile picture
+  - Auth Page :
+    - Login & Register new account
 
 ## Database Schema :
 
@@ -296,6 +298,9 @@ Returns all comments in a video by videoID.
     OR
   - **Code:** 404  
     **Content:** `{ message : "Comments not found!" }`
+    OR
+  - **Code:** 500
+    **Content:** `{ message : "Something went wrong!" }`
 
 ### **POST /comments/:\_videoId**
 
