@@ -1,4 +1,30 @@
-## Bonus :
+# Shopedia (Tokopedia Play Clone)
+
+This is a final project for Generasi GIGIH 3.0 for Fullstack Engineering Track
+
+## Tech Stack
+
+This app built using the MERN stack (MongoDB, Express, React, Node.js) with Vite + Typescript to make things fast and sleek. Using Tailwind CSS for the styling to add the extra flair to our user-friendly interfaces, and Socket IO for the live comments feature.
+
+## Features
+
+- Multiple Pages:
+  - Home Page :
+    - Display a list of videos from YouTube with thumbnails. Allow users to click on each video to navigate to the video detail page.
+    - User can search videos by its title.
+  - Video Detail Page :
+    - Show the selected video from YouTube along with its details. Include a product list relevant to the video content.
+    - Display a list of LIVE comments related to the video.
+    - Provide a form for users to submit comments.
+  - Profile Page :
+    - Show user profile information
+    - User can change profile picture
+
+## Database Schema :
+
+[DB Schema](https://viewer.diagrams.net/?tags=%7B%7D&highlight=0000ff&edit=_blank&layers=1&nav=1&title=erd.drawio#R7Vpbc%2BI2FP41ntk%2BbMYX7JDHQELbKUmZkHR3nzrCFrYa2XJlmcv%2B%2Bh7ZEo5xIN5QL8yEGQas4yP56HzfuQgwnGG8%2BpWjNLpjAaaGbQYrw7kxbNtyLAc%2BpGRdSrzLfikIOQmUUiWYku9YCU0lzUmAs5qiYIwKktaFPksS7IuaDHHOlnW1OaP1p6YoxA3B1Ee0Kf1CAhGV0r5rVvLfMAkj%2FWTLVHdipJWVIItQwJY1EV6JEUuEMnGCeYwSnAi4c4f4M%2BaGexsJIXd6bdgjeM2l9kXIWEgxSkl24bMYxH4GKqM5igmVbn6x0EAtBI9zbg1nyBkT5VW8GmIqsdIwlDaNdtzd%2BIHLdVtMoJPp6lvPWiwWjw8hfvz7Cxs8fO6pjS8QzZWD%2FwJ8WaZcJNba79mSxBQ2YTgDuempumPC2I8IDcZozXJpSCaQ%2F6xHg4hx8h30EYVbFgjgNheKVrZX05jKmWpNjjPQmejdWVuiO7SqKY5RJrQ1jFKUZmRW2CcnxoiHJBkwIQCcUglREiZw7cNagIbaU2mV1YOxcgvmAq92OtzawAjhhlmMBV%2BDipqgfasCbUOyZUVbW9M2eklZPREpHoabpSt44UIh%2FCNoW6%2Bj%2FTtcmVPBSRLCxf2fj%2FL9aTw2bA%2FFKXgjmWVp4RTz0%2BSPXxrcAB%2BJAlrOnvGQUQYevUlYSRZC6ZYoS5EPjxrjudxxr5I8KCdIEQPfz2kRnxEJApxIrJlAAs02xEsZUcHqDuAFbhuaF67hgk1DGFvVGF5SnYshS8BMRAoIMbBmiSVzavgDpoNlRASegllSsoRUKpkqYs1iqa53ZdjOteXaptmWNnsisUkmzR6vHXmczrhjN7hDYki2T5zuIs%2BHZ0lnbHCPzganwYaFzCT3KMZnOvxsOvRb0sHtdUWHXoMOE86C3BfnRuLwRsK5rHcSTttGot9Z%2BLu78D63EifQSvROvJXwGuwBelDtu%2BLwqP3h%2FZvLAxJ4w8HIm3neS5EXys83Wljz00jyrFxfHdn0VC2e8d2SMUmed3L6zdn7CuLbsyec%2BHL6fR7P5KHxXE%2F%2Fp3q6P0LatleW3VlBvWqEyJDFMU7OBbWLgtpvWVHtq65yotv8IkYBfq6oJ1BRr067orrNL3ZOuKKS7BrIBusMGKMYJT9cFlPOgLl4QnyR8wPKa55hnpQF%2BtUK%2B%2FYKfhmj7zfhEJiewPzuUPI5RgIH19KsRxJDJMp000g6LbycBm0W%2BvBpq7P01LadsZ2u2hm3eV6U5D33Mof3MpduvZdp%2FzNDd71M83y3P1WdG5mf1ciUgXjCjcxlgzqnU%2BxxjMjOHztadC0oy5aMB7tW%2BPB074zWrc%2Fz3RXAfgNfHIRY1zfwYcRCliB6W0kBmTwJcKBwqXTGjKXKZf9gIdbKxSgXrO5QvCLi64vrb3IpwK4c3ejiVgzWepDAfr8WimYBWiEoZ5pXl1pQTS5GtdkTzKHNKyreTZWu5H731zhwD8u5j%2Fd1OupXSCjvId7bEnmvM4JjigRZ1C15De5i6jXnaP1CQcVGtfJECqpivPl%2BYJNPt%2F6TsaXvOIfpX%2FW3mFkaXPF0s%2FP3U9ezjkJdTcPPQDtzm4cQTkfmodWSh%2B6O7q01Dw9KO559zLRjviftWAB3rw635x077egCcjS4YVj9U6yM7Orvfc7tfw%3D%3D)
+
+## Bonus Features Mentioned :
 
 - **User profile picture and username**
 - **Websocket for live comments**
@@ -611,5 +637,6 @@ Follow these steps to set up and run the project:
 That's it! The backend and frontend should now be up and running. For the frontend you can access it by navigating to `http://localhost:<PORT>` in your web browser, where `<PORT>` is the port number you set in the `vite.config.ts` file. And for the backend, you can access it by navigating to `http://localhost:<PORT>`, where `<PORT>` is the port number you set in the `.env` file in backend folder.
 
 Here is the collection to use in Postman
+[postman.collections](https://drive.google.com/drive/folders/11SGqqv1rO_6HEYvtihquihlc9pcBDk4s?usp=drive_link)
 
 If everything went smoothly, you are now ready to use the application.

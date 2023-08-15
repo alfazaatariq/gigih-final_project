@@ -269,9 +269,13 @@ export const getCommentsById = async (req, res) => {
         comments: comments,
       });
     }
-  } catch (error) {
-    res.status(404).json({
+
+    return res.status(404).json({
       message: 'Comments not found!',
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Something went wrong!',
     });
   }
 };
