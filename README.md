@@ -413,7 +413,7 @@ Login into a user account.
 - **Data Params**
   ```
     {
-        email: boolean,
+        email: string,
         password: string,
     }
   ```
@@ -520,7 +520,7 @@ Update a user profile picture by \_id.
 
 ### **GET /users**
 
-Update a user profile picture by \_id.
+Get all user account.
 
 - **URL Params**  
   None
